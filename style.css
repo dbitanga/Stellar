@@ -1,0 +1,173 @@
+:root {
+  --text-light: #E2E8F0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; 
+}
+
+body {
+  background: #0b0f1a; 
+  font-family: 'Goldman', sans-serif;
+}
+
+.fade-section {
+  position: relative; 
+  width: 100%;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-img {
+  display: block;
+  width: 100%;
+  height: auto; 
+}
+
+
+
+.hotspot {
+  position: absolute; 
+  pointer-events: none;
+}
+
+.hotspot a {
+  position: absolute;
+  display: block;
+  pointer-events: auto; 
+  background: transparent;
+}
+
+/* --- Header nav (Home / Product / Stores) --- */
+
+.site-nav {
+  position: absolute;
+  top: 1.8%;
+  left: 33%;
+  width: 34%;
+  height: 6%; 
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.site-nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: clamp(0.75rem, 1.2vw, 1rem); 
+  letter-spacing: 0.03em;
+  opacity: 1;
+}
+
+
+.site-nav a.active {
+  opacity: 0.75;
+}
+
+
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+
+.selection-cards {
+  position: absolute;
+  top: 54%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7%;
+}
+
+.selection-cards a {
+  display: block;
+  width: 20%;
+  transition: transform 0.3s ease, opacity 0.3s ease; 
+}
+
+.selection-cards a:hover {
+  opacity: 0.85;
+  transform: scale(1.05); 
+}
+
+.selection-cards img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.btn-pill {
+  position: absolute;
+
+  background-color: #A8C4DA;
+  color: #181E28;
+  border: none;
+  border-radius: 999px; 
+  padding: 0.7em 1.6em;
+
+  font-family: 'Goldman', sans-serif;
+  font-size: clamp(0.7rem, 1vw, 0.95rem);
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.btn-pill:hover {
+  opacity: 0.85;
+}
+
+
+.explore-btn {
+  top: 77%;
+  left: 4%;
+}
+
+.shop-now-btn {
+  top: 51%;
+  right: 3.5%;
+}
+
+
+
+.social-icons {
+  position: absolute;
+  top: 35%;
+  right: 4%;
+  display: flex;
+  align-items: center; 
+}
+
+.social-icons img {
+  width: 1.5vw;   
+  min-width: 18px;
+  display: block;
+  transition: transform 0.25s ease; 
+}
+
+.social-icons img:hover {
+  transform: scale(1.15); 
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-section {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
