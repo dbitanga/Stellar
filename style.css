@@ -2,6 +2,12 @@
   --text-light: #E2E8F0;
 }
 
+html {
+  scroll-behavior: smooth;
+  width: 100%;
+  height: 100%;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +17,17 @@
 body {
   background: #0b0f1a; 
   font-family: 'Goldman', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Master Wrapper to hold zoom scaling aspect ratio */
+.site-wrapper {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .fade-section {
@@ -34,8 +51,6 @@ body {
   height: auto; 
 }
 
-
-
 .hotspot {
   position: absolute; 
   pointer-events: none;
@@ -48,11 +63,73 @@ body {
   background: transparent;
 }
 
-/* --- Header nav (Home / Product / Stores) --- */
+/* --- Header & Navigation Layout Fixes --- */
+
+.site-header {
+  position: relative;
+  width: 100%;
+}
+
+.header-hotspot {
+  position: absolute;
+  top: 47%;
+  right: 5%;
+  height: 6%;
+  display: flex;
+  align-items: center;
+  gap: 2vw;
+}
+
+.signin-link {
+  color: #A8C4DA;
+  font-family: 'Goldman', sans-serif;
+  font-size: clamp(1rem, 1.1vw, 2rem);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signin-link:hover {
+  text-decoration: underline;
+}
+
+.account-icon-link {
+  display: flex;
+  align-items: center;
+}
+
+.account-icon-link img {
+  width: 1.6vw;
+  min-width: 20px;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.account-icon-link:hover img {
+  transform: scale(1.15);
+}
+
+.logout-link {
+  color: #A8C4DA;
+  font-family: 'Goldman', sans-serif;
+  font-size: clamp(0.75rem, 0.85vw, 1.4rem);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.logout-link:hover {
+  text-decoration: underline;
+}
 
 .site-nav {
   position: absolute;
-  top: 1.8%;
+  top: 47%;
   left: 33%;
   width: 34%;
   height: 6%; 
@@ -64,21 +141,40 @@ body {
 .site-nav a {
   color: var(--text-light);
   text-decoration: none;
-  font-size: clamp(0.75rem, 1.2vw, 1rem); 
+  font-size: clamp(1rem, 1.1vw, 2rem);
   letter-spacing: 0.03em;
   opacity: 1;
+  display: flex;
+  align-items: center;
 }
-
 
 .site-nav a.active {
   opacity: 0.75;
 }
 
-
 .site-nav a:hover {
   text-decoration: underline;
 }
 
+/* --- Brand Laptop Image Positioning & Hover --- */
+
+.brand-laptop {
+  position: absolute;
+  top: 52%;
+  right: 6.5%;
+  width: 35%;
+  height: auto;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.brand-laptop:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* --- Selection Cards --- */
 
 .selection-cards {
   position: absolute;
@@ -110,6 +206,8 @@ body {
   display: block;
 }
 
+/* --- Buttons --- */
+
 .btn-pill {
   position: absolute;
 
@@ -120,7 +218,7 @@ body {
   padding: 0.7em 1.6em;
 
   font-family: 'Goldman', sans-serif;
-  font-size: clamp(0.7rem, 1vw, 0.95rem);
+  font-size: clamp(1rem, 1.1vw, 2rem);
   text-decoration: none;
   cursor: pointer;
 
@@ -131,9 +229,8 @@ body {
   opacity: 0.85;
 }
 
-
 .explore-btn {
-  top: 77%;
+  top: 75%;
   left: 4%;
 }
 
@@ -142,14 +239,45 @@ body {
   right: 3.5%;
 }
 
+/* --- About Us Section Hotspot --- */
 
+.about-hotspot {
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+
+.about-link {
+  top: 60%;
+  left: 30%;
+  width: 40%;
+  height: 20%;
+}
+
+/* --- Footer Hotspots & Social Media Icons --- */
+
+.footer-hotspot {
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+}
+
+.footer-shop-link {
+  top: 88%;
+  left: 80%;
+  width: 12%;
+  height: 8%;
+}
 
 .social-icons {
   position: absolute;
   top: 35%;
-  right: 4%;
+  right: 4.5%;
   display: flex;
   align-items: center; 
+  gap: 1.2vw;
 }
 
 .social-icons img {
@@ -163,6 +291,48 @@ body {
   transform: scale(1.15); 
 }
 
+/* --- Products Page Auto-Adjusting Layout --- */
+
+.products-wrapper {
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem 2rem;
+  background: #0b0f1a;
+}
+
+.products-container {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.products-header-text {
+  text-align: center;
+  color: var(--text-light);
+}
+
+.products-header-text h1 {
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.products-header-text p {
+  color: #A8C4DA;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+}
+
+.products-content-area {
+  width: 100%;
+  height: auto;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .fade-section {
@@ -170,4 +340,188 @@ body {
     opacity: 1;
     transform: none;
   }
+}
+
+.products-content-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.product-category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.product-section-item {
+  color: #A8C4DA;
+  font-family: 'Goldman', sans-serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+  text-align: left;
+  border-bottom: 1px solid rgba(168, 196, 218, 0.2);
+  padding-bottom: 0.4rem;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-price {
+  color: #A8C4DA;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+
+.product-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(168, 196, 218, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  /* Use min-height and auto instead of a rigid height */
+  min-height: 180px;
+  height: auto;
+  transition: border-color 0.3s ease;
+}
+
+.card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.card-details {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  margin-top: 0;
+}
+
+.product-card.expanded .card-details {
+  opacity: 1;
+  max-height: 500px; /* Generous max-height ceiling to safely fit all specs */
+  margin-top: 0.5rem;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: .1rem; /* Keeps space clean between specs and buttons */
+}
+
+.product-card h3 {
+  color: #E2E8F0;
+  font-size: 1.1rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+
+.spec-text {
+  font-size: 0.75rem !important;
+  color: #A8C4DA !important;
+  line-height: 1.3 !important;
+  margin-bottom: 0.2rem;
+}
+
+/* --- Corrected Card Layout & Button Fixes --- */
+
+/* --- Corrected Card Layout & Button Fixes --- */
+
+.card-actions {
+  display: flex;
+  flex-direction: column; 
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2; /* Ensures buttons sit above other elements and remain clickable */
+}
+
+.btn-text-toggle {
+  background: transparent !important;
+  border: none;
+  color: #E2E8F0;
+  font-family: 'Goldman', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.btn-text-toggle:hover {
+  text-decoration: underline;
+}
+
+.card-btn-pill {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100%;
+  text-align: center;
+  padding: 0.7em 1.6em;
+  font-size: 0.85rem;
+}
+
+.cards-grid {
+  align-items: start;
+}
+
+.card-thumb {
+  width: 100%;
+  max-width: 170px;
+  height: auto;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* --- Card Text and Image Centering --- */
+.product-card .card-inner > div:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.product-card .card-details {
+  text-align: left;
+  width: 100%;
+}
+
+.product-card h3::before {
+  content: "";
+  display: block;
+  width: 250px;
+  height: 1px;
+  background: rgba(168, 196, 218, 0.25);
+  margin: 0.6rem auto;
+}
+
+.card-price::after {
+  content: "";
+  display: block;
+  width: 250px;
+  height: 1px;
+  background: rgba(168, 196, 218, 0.25);
+  margin: 0.6rem auto 0 auto;
 }
