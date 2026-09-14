@@ -15,13 +15,13 @@ include 'header.php';
     <img src="Images/Homepage/2 Selection.jpg" alt="Choose your STELLAR model" class="section-img">
 
     <div class="selection-cards">
-      <a href="workstation.php" aria-label="Workstation">
+      <a href="products.php" aria-label="Workstation">
         <img src="Images/Homepage/Workstation Card.png" alt="Workstation laptop">
       </a>
-      <a href="gaming.php" aria-label="Gaming">
+      <a href="products.php" aria-label="Gaming">
         <img src="Images/Homepage/Gaming Card.png" alt="Gaming laptop">
       </a>
-      <a href="personal.php" aria-label="Personal">
+      <a href="products.php" aria-label="Personal">
         <img src="Images/Homepage/Personal Card.png" alt="Personal laptop">
       </a>
     </div>

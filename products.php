@@ -41,7 +41,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-1">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ws-1">
+                    <input type="hidden" name="product_id" value="1">
                     <input type="hidden" name="name" value="Forge SE">
                     <input type="hidden" name="specs" value="AMD Ryzen 5 • 8GB RAM • 256GB SSD">
                     <input type="hidden" name="price" value="38999">
@@ -71,7 +71,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-2">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ws-2">
+                    <input type="hidden" name="product_id" value="2">
                     <input type="hidden" name="name" value="Forge Pro">
                     <input type="hidden" name="specs" value="Intel Core i5 • 16GB RAM • 512GB SSD">
                     <input type="hidden" name="price" value="64999">
@@ -101,7 +101,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-3">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ws-3">
+                    <input type="hidden" name="product_id" value="3">
                     <input type="hidden" name="name" value="Forge Eclipse">
                     <input type="hidden" name="specs" value="Intel Core i7 • 32GB RAM • 1TB SSD">
                     <input type="hidden" name="price" value="114999">
@@ -139,7 +139,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-1">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="gm-1">
+                    <input type="hidden" name="product_id" value="1">
                     <input type="hidden" name="name" value="Nova SE">
                     <input type="hidden" name="specs" value="AMD Ryzen 5 • 8GB RAM • 512GB SSD">
                     <input type="hidden" name="price" value="36999">
@@ -169,7 +169,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-2">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="gm-2">
+                    <input type="hidden" name="product_id" value="2">
                     <input type="hidden" name="name" value="Nova Pro">
                     <input type="hidden" name="specs" value="AMD Ryzen 7 • 16GB RAM • 1TB SSD">
                     <input type="hidden" name="price" value="67999">
@@ -199,7 +199,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-3">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="gm-3">
+                    <input type="hidden" name="product_id" value="3">
                     <input type="hidden" name="name" value="Nova Eclipse">
                     <input type="hidden" name="specs" value="Intel Core i7 • 32GB RAM • 1TB SSD">
                     <input type="hidden" name="price" value="119999">
@@ -237,7 +237,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-1">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ps-1">
+                    <input type="hidden" name="product_id" value="1">
                     <input type="hidden" name="name" value="Cosmic SE">
                     <input type="hidden" name="specs" value="Intel Core i3 • 8GB RAM • 256GB SSD">
                     <input type="hidden" name="price" value="32999">
@@ -267,7 +267,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-2">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ps-2">
+                    <input type="hidden" name="product_id" value="2">
                     <input type="hidden" name="name" value="Cosmic Pro">
                     <input type="hidden" name="specs" value="Intel Core i5 • 16GB RAM • 512GB SSD">
                     <input type="hidden" name="price" value="58999">
@@ -297,7 +297,7 @@ include 'header.php';
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-3">View More</button>
                   <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
-                    <input type="hidden" name="product_id" value="ps-3">
+                    <input type="hidden" name="product_id" value="3">
                     <input type="hidden" name="name" value="Cosmic Eclipse">
                     <input type="hidden" name="specs" value="Intel Core Ultra 7 • 32GB RAM • 1TB SSD">
                     <input type="hidden" name="price" value="99999">

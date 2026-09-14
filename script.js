@@ -117,12 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Asynchronous Cart Quantity & Removal Handler (Cart/cart.php)
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('qty-btn') || e.target.classList.contains('remove-btn')) {
     e.preventDefault();
     
     const form = e.target.closest('form');
     const formData = new FormData(form);
+    
+    // Explicitly append the clicked button's action value ('increase', 'decrease', or 'remove')
     formData.append('action', e.target.value);
 
     fetch('cart.php', {
@@ -133,16 +136,126 @@ document.addEventListener('click', function(e) {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        if (data.cart_empty) {
-          location.reload(); // Refresh cleanly only if cart becomes completely empty to show empty state
-          return;
+        const cartContainer = document.querySelector('.cart-container');
+        if (cartContainer && data.cart_html) {
+          cartContainer.innerHTML = data.cart_html;
         }
-
-        // Update item list and summary dynamically without full page reload
-        // (Alternatively, you can dynamically redraw the items container here based on data.items)
-        location.reload(); // Or swap out DOM nodes seamlessly
       }
     })
     .catch(err => console.error('Cart update error:', err));
   }
+});
+
+// Checkout Modal Interaction Handler (Event Delegation for AJAX safety)
+document.addEventListener('click', (e) => {
+  const checkoutModal = document.getElementById('checkoutModal');
+  
+  // 1. Open Modal when clicking "Proceed to Checkout"
+  if (e.target && e.target.id === 'openCheckoutBtn') {
+    if (checkoutModal) {
+      checkoutModal.classList.add('active');
+      checkoutModal.classList.add('show');
+    }
+  }
+
+  // 2. Close Modal when clicking the close button (if you add one later)
+  if (e.target && e.target.id === 'closeCheckoutBtn') {
+    if (checkoutModal) {
+      checkoutModal.classList.remove('active');
+      checkoutModal.classList.remove('show');
+    }
+  }
+
+  // 3. Close Modal when clicking outside the modal content overlay
+  if (checkoutModal && e.target === checkoutModal) {
+    checkoutModal.classList.remove('active');
+    checkoutModal.classList.remove('show');
+  }
+});
+
+document.addEventListener('click', (e) => {
+  const checkoutModal = document.getElementById('checkoutModal');
+  
+  // Open Modal
+  if (e.target && e.target.id === 'openCheckoutBtn') {
+    if (checkoutModal) {
+      checkoutModal.classList.add('active', 'show');
+    }
+  }
+
+  // Close confirmation modal and reload or redirect
+  if (e.target && e.target.id === 'closeConfirmationBtn') {
+    window.location.href = 'cart.php';
+  }
+
+  // Close modal on background click
+  if (checkoutModal && e.target === checkoutModal) {
+    checkoutModal.classList.remove('active', 'show');
+  }
+});
+
+// Handle asynchronous checkout form submission
+document.addEventListener('submit', async (e) => {
+  if (e.target && e.target.id === 'checkoutForm') {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    
+    try {
+      // Point directly to your process_checkout.php file inside the Cart folder:
+      const response = await fetch('cart.php', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        const formView = document.getElementById('checkoutFormView');
+        const confirmedView = document.getElementById('orderConfirmedView');
+        const dateRangeSpan = document.getElementById('deliveryDateRange');
+        
+        if (formView && confirmedView && dateRangeSpan) {
+          formView.style.display = 'none';
+          confirmedView.style.display = 'flex';
+          dateRangeSpan.textContent = data.delivery_window;
+        }
+      } else {
+        alert(data.message || 'Checkout failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An unexpected error occurred.');
+    }
+  }
+});
+
+// Example of how your product card button should pass the product_id
+document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const productId = e.target.dataset.productId; // e.g., data-product-id="1"
+        const name = e.target.dataset.name;
+        const price = e.target.dataset.price;
+        const specs = e.target.dataset.specs;
+        const image = e.target.dataset.image;
+
+        const formData = new FormData();
+        formData.append('product_id', productId); // Must match what add_to_cart.php expects!
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('specs', specs);
+        formData.append('image', image);
+
+        const response = await fetch('add_to_cart.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('Added to cart!');
+        }
+    });
 });

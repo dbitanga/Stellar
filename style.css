@@ -734,7 +734,6 @@ body {
 
 .empty-cart-state {
   color: var(--text-light);
-  opacity: 0.7;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -745,6 +744,8 @@ body {
   position: relative !important;
   top: auto !important;
   left: auto !important;
+  background-color: #A8C4DA;
+  color: #181E28;
 }
 
 .cart-notification-modal {
@@ -790,3 +791,222 @@ body {
   color: #aaaaaa;
 }
 
+.checkout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 15, 26, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.checkout-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.checkout-modal-content {
+  background: #181e28;
+  border: 1px solid rgba(226, 232, 240, 0.15);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: var(--text-light);
+}
+
+.checkout-modal-content h2 {
+  font-size: 1.3rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.15);
+  padding-bottom: 0.8rem;
+}
+
+.checkout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.checkout-section h3 {
+  font-size: 0.95rem;
+  color: #A8C4DA;
+}
+
+.checkout-input {
+  width: 100%;
+  background: #10141c;
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  color: var(--text-light);
+  font-family: 'Goldman', sans-serif;
+  font-size: 0.9rem;
+}
+
+.payment-options {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.checkout-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.secondary-btn {
+  background: transparent !important;
+  color: var(--text-light) !important;
+  border: 1px solid rgba(226, 232, 240, 0.2) !important;
+}
+
+.checkout-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.checkout-modal-overlay.active {
+  display: flex !important;
+}
+
+.custom-checkout-modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-card, #1e293b);
+  border-radius: 12px;
+  padding: 2rem;
+  box-sizing: border-box;
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+.checkout-items-scroll {
+  max-height: 110px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkout-summary-row,
+.checkout-sub-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-light, #cbd5e1);
+}
+
+.checkout-breakdown-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0.3rem 0;
+}
+
+.checkout-total-text {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: var(--text-light, #cbd5e1);
+  margin: 0;
+}
+
+.checkout-label {
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.checkout-actions {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1.5rem;
+  position: relative;
+  z-index: 10001;
+}
+
+.confirm-order-btn {
+  display: inline-block;
+  width: 100% !important;
+  max-width: 240px !important;
+  margin: 0 auto;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.95rem !important;
+  text-align: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+  z-index: 10002;
+  pointer-events: auto !important;
+}
+
+.order-confirmed-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+  color: var(--text-light, #E2E8F0);
+  padding: 1rem 0;
+}
+
+.confirmation-message {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #A8C4DA;
+}
+
+.delivery-estimate-box {
+  background: #10141c;
+  border: 1px solid rgba(168, 196, 218, 0.2);
+  border-radius: 10px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.delivery-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.delivery-date-highlight {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #A8C4DA;
+}
