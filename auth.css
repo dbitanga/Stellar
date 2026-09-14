@@ -1,5 +1,8 @@
 :root {
   --text-light: #E2E8F0;
+  --card-radius: 25px;
+  --button-radius: 25px;
+  --btn-primary-color: #A8C4DA;
 }
 
 * {
@@ -8,7 +11,8 @@
   box-sizing: border-box;
 }
 
-body {
+/* Standalone Auth Body (for Login and Signup pages) */
+body.auth-page {
   font-family: 'Goldman', sans-serif;
   min-height: 100vh;
   background:
@@ -32,7 +36,7 @@ body {
   max-width: 400px;
   background: rgba(24, 30, 40, 0.6);
   border: 1px solid rgba(226, 232, 240, 0.15);
-  border-radius: 12px;
+  border-radius: var(--card-radius); /* Updated */
   padding: 40px 36px;
   backdrop-filter: blur(6px);
 }
@@ -102,12 +106,12 @@ textarea:focus {
 }
 
 button[type="submit"] {
-  background: var(--text-light);
+  background: var(--btn-primary-color); /* Updated from var(--text-light) */
   color: #181E28;
   font-family: 'Goldman', sans-serif;
   font-size: 15px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--button-radius);
   padding: 14px;
   cursor: pointer;
   transition: opacity 0.3s ease;
@@ -157,10 +161,14 @@ button[type="submit"]:hover {
 }
 
 /* ---------- Account Page ---------- */
-.account-body {
-  align-items: flex-start;
-  padding-top: 60px;
-  padding-bottom: 60px;
+.account-wrapper {
+  width: 100%;
+  min-height: calc(93.5vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: #0b0f1a;
 }
 
 .account-page {
@@ -172,29 +180,6 @@ button[type="submit"]:hover {
   gap: 24px;
 }
 
-.account-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.account-topbar .logo {
-  font-size: 24px;
-  letter-spacing: 3px;
-}
-
-.logout-link {
-  color: var(--text-light);
-  opacity: 0.75;
-  font-size: 13px;
-  text-decoration: none;
-}
-
-.logout-link:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
 .form-success {
   color: #8ce89a;
   font-size: 13px;
@@ -204,7 +189,7 @@ button[type="submit"]:hover {
 .account-card {
   background: rgba(24, 30, 40, 0.6);
   border: 1px solid rgba(226, 232, 240, 0.15);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   padding: 28px 32px;
   backdrop-filter: blur(6px);
 }
@@ -217,6 +202,24 @@ button[type="submit"]:hover {
 
 .account-card form {
   margin-top: 4px;
+}
+
+.account-card button.btn-account-save {
+  width: 100%;
+  background: var(--btn-primary-color);
+  color: #181E28;
+  font-family: 'Goldman', sans-serif;
+  font-size: 15px;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 14px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  margin-top: 6px;
+}
+
+.account-card button.btn-account-save:hover {
+  opacity: 0.85;
 }
 
 .empty-state {
@@ -233,7 +236,7 @@ button[type="submit"]:hover {
 
 .order-item {
   border: 1px solid rgba(226, 232, 240, 0.15);
-  border-radius: 8px;
+  border-radius: var(--button-radius);
   padding: 14px 16px;
 }
 
@@ -318,7 +321,7 @@ button[type="submit"]:hover {
   background: transparent;
   color: #f28b82;
   border: 1px solid #f28b82;
-  border-radius: 6px;
+  border-radius: var(--button-radius);
   padding: 10px 20px;
   font-family: 'Goldman', sans-serif;
   font-size: 13px;
@@ -349,7 +352,7 @@ button[type="submit"]:hover {
 .modal-box {
   background: #181e28;
   border: 1px solid rgba(226, 232, 240, 0.15);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   padding: 28px 32px;
   max-width: 380px;
   width: 100%;
@@ -383,7 +386,7 @@ button[type="submit"]:hover {
   background: transparent;
   color: var(--text-light);
   border: 1px solid rgba(226, 232, 240, 0.3);
-  border-radius: 6px;
+  border-radius: var(--button-radius);
   padding: 10px;
   font-family: 'Goldman', sans-serif;
   font-size: 13px;
@@ -399,7 +402,7 @@ button[type="submit"]:hover {
   background: #f28b82;
   color: #181E28;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--button-radius);
   padding: 10px;
   font-family: 'Goldman', sans-serif;
   font-size: 13px;

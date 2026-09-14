@@ -1,5 +1,4 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -11,21 +10,15 @@ if (isset($_SESSION['user_id'])) {
 
 $status  = $_GET['status'] ?? null;
 $message = $_GET['message'] ?? null;
+
+$base_path = '..';
+$hide_signin = true;
+include '../header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up — STELLAR</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../auth.css">
 
-  <link rel="stylesheet" href="../auth.css">
-</head>
-<body>
-
+<main class="account-wrapper">
   <div class="login-wrap">
     <div class="login-card">
 
@@ -65,6 +58,6 @@ $message = $_GET['message'] ?? null;
 
     </div>
   </div>
+</main>
 
-</body>
-</html>
+<?php include '../footer.php'; ?>

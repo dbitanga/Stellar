@@ -36,7 +36,6 @@ $stmt->execute();
 $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Pull each order's line items (product name, quantity, price at purchase)
 $itemStmt = $conn->prepare(
     'SELECT oi.quantity, oi.price_at_purchase, p.name
      FROM order_items oi
@@ -54,27 +53,16 @@ $conn->close();
 
 $status  = $_GET['status'] ?? null;
 $message = $_GET['message'] ?? null;
+
+$base_path = '..';
+require '../header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Account — STELLAR</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../auth.css">
 
-  <link rel="stylesheet" href="../auth.css">
-</head>
-<body class="account-body">
-
+<!-- MAIN ACCOUNT CONTAINER -->
+<main class="account-wrapper">
   <div class="account-page">
-
-    <div class="account-topbar">
-      <a href="../index.php" class="logo">STELLAR</a>
-      <a href="../Logout/logout.php" class="logout-link">Log Out</a>
-    </div>
 
     <?php if ($status === 'error' && $message): ?>
       <p class="form-error"><?php echo htmlspecialchars($message); ?></p>
@@ -147,7 +135,7 @@ $message = $_GET['message'] ?? null;
 
         <p class="member-since">Member since <?php echo date('F Y', strtotime($user['created_at'])); ?></p>
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" class="btn-account-save">Save Changes</button>
       </form>
     </section>
 
@@ -159,22 +147,21 @@ $message = $_GET['message'] ?? null;
     </section>
 
   </div>
+</main>
 
-  <!-- DELETE CONFIRMATION MODAL -->
-  <div id="delete-modal" class="modal-overlay">
-    <div class="modal-box">
-      <h3>Delete your account?</h3>
-      <p>This will permanently delete your account and all order history. This cannot be undone.</p>
-      <div class="modal-actions">
-        <button type="button" id="cancel-delete" class="btn-secondary">Cancel</button>
-        <form method="POST" action="account_function.php">
-          <input type="hidden" name="action" value="delete_account">
-          <button type="submit" class="btn-danger">Confirm Delete</button>
-        </form>
-      </div>
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="delete-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Delete your account?</h3>
+    <p>This will permanently delete your account and all order history. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button type="button" id="cancel-delete" class="btn-secondary">Cancel</button>
+      <form method="POST" action="account_function.php">
+        <input type="hidden" name="action" value="delete_account">
+        <button type="submit" class="btn-danger">Confirm Delete</button>
+      </form>
     </div>
   </div>
+</div>
 
-  <script src="../script.js"></script>
-</body>
-</html>
+<?php include '../footer.php'; ?>

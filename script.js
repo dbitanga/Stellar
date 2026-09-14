@@ -58,3 +58,91 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Inject notification element into the DOM if it doesn't already exist
+  if (!document.getElementById('cartNotification')) {
+    const modal = document.createElement('div');
+    modal.id = 'cartNotification';
+    modal.className = 'cart-notification-modal';
+    modal.innerHTML = `
+      <img id="notifImg" src="" alt="" class="cart-notification-img">
+      <div class="cart-notification-text">
+        <h4 id="notifTitle"></h4>
+        <p>Added to your cart successfully!</p>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  const notifModal = document.getElementById('cartNotification');
+  const notifImg = document.getElementById('notifImg');
+  const notifTitle = document.getElementById('notifTitle');
+  let timeoutId;
+
+  // Intercept all product add-to-cart forms
+  const addForms = document.querySelectorAll('form[action="Cart/add_to_cart.php"]');
+  addForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+
+      fetch('Cart/add_to_cart.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          notifImg.src = data.item.image;
+          notifTitle.textContent = data.item.name;
+
+          // Trigger display
+          notifModal.classList.add('show');
+
+          // Reset timer if clicked multiple times rapidly
+          clearTimeout(timeoutId);
+
+          // Automatically fade out after 3 seconds
+          timeoutId = setTimeout(() => {
+            notifModal.classList.remove('show');
+          }, 3000);
+        } else if (data.message === 'Not logged in') {
+          window.location.href = 'Login/login.php';
+        }
+      })
+      .catch(err => console.error('Cart error:', err));
+    });
+  });
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('qty-btn') || e.target.classList.contains('remove-btn')) {
+    e.preventDefault();
+    
+    const form = e.target.closest('form');
+    const formData = new FormData(form);
+    formData.append('action', e.target.value);
+
+    fetch('cart.php', {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        if (data.cart_empty) {
+          location.reload(); // Refresh cleanly only if cart becomes completely empty to show empty state
+          return;
+        }
+
+        // Update item list and summary dynamically without full page reload
+        // (Alternatively, you can dynamically redraw the items container here based on data.items)
+        location.reload(); // Or swap out DOM nodes seamlessly
+      }
+    })
+    .catch(err => console.error('Cart update error:', err));
+  }
+});

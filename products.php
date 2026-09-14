@@ -5,6 +5,7 @@ include 'header.php';
 
   <!-- MAIN PRODUCTS CONTAINER -->
   <main class="products-wrapper">
+    
     <div class="products-container">
       
       <!-- Products Header -->
@@ -39,7 +40,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-1">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ws-1">
+                    <input type="hidden" name="name" value="Forge SE">
+                    <input type="hidden" name="specs" value="AMD Ryzen 5 • 8GB RAM • 256GB SSD">
+                    <input type="hidden" name="price" value="38999">
+                    <input type="hidden" name="image" value="Images/Products/Workstation.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -62,7 +70,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-2">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ws-2">
+                    <input type="hidden" name="name" value="Forge Pro">
+                    <input type="hidden" name="specs" value="Intel Core i5 • 16GB RAM • 512GB SSD">
+                    <input type="hidden" name="price" value="64999">
+                    <input type="hidden" name="image" value="Images/Products/Workstation.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -85,7 +100,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ws-3">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ws-3">
+                    <input type="hidden" name="name" value="Forge Eclipse">
+                    <input type="hidden" name="specs" value="Intel Core i7 • 32GB RAM • 1TB SSD">
+                    <input type="hidden" name="price" value="114999">
+                    <input type="hidden" name="image" value="Images/Products/Workstation.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -102,7 +124,7 @@ include 'header.php';
             <div class="product-card" id="card-gm-1">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Gaming" class="card-thumb">
+                  <img src="Images/Products/Gaming.png" alt="Gaming" class="card-thumb">
                   <h3>Nova SE</h3>
                   <p class="card-price">₱36,999</p>
                   <div class="card-details">
@@ -116,7 +138,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-1">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="gm-1">
+                    <input type="hidden" name="name" value="Nova SE">
+                    <input type="hidden" name="specs" value="AMD Ryzen 5 • 8GB RAM • 512GB SSD">
+                    <input type="hidden" name="price" value="36999">
+                    <input type="hidden" name="image" value="Images/Products/Gaming.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -125,7 +154,7 @@ include 'header.php';
             <div class="product-card" id="card-gm-2">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Gaming" class="card-thumb">
+                  <img src="Images/Products/Gaming.png" alt="Gaming" class="card-thumb">
                   <h3>Nova Pro</h3>
                   <p class="card-price">₱67,999</p>
                   <div class="card-details">
@@ -139,7 +168,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-2">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="gm-2">
+                    <input type="hidden" name="name" value="Nova Pro">
+                    <input type="hidden" name="specs" value="AMD Ryzen 7 • 16GB RAM • 1TB SSD">
+                    <input type="hidden" name="price" value="67999">
+                    <input type="hidden" name="image" value="Images/Products/Gaming.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -148,7 +184,7 @@ include 'header.php';
             <div class="product-card" id="card-gm-3">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Gaming" class="card-thumb">
+                  <img src="Images/Products/Gaming.png" alt="Gaming" class="card-thumb">
                   <h3>Nova Eclipse</h3>
                   <p class="card-price">₱119,999</p>
                   <div class="card-details">
@@ -162,7 +198,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-gm-3">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="gm-3">
+                    <input type="hidden" name="name" value="Nova Eclipse">
+                    <input type="hidden" name="specs" value="Intel Core i7 • 32GB RAM • 1TB SSD">
+                    <input type="hidden" name="price" value="119999">
+                    <input type="hidden" name="image" value="Images/Products/Gaming.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -179,7 +222,7 @@ include 'header.php';
             <div class="product-card" id="card-ps-1">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Personal" class="card-thumb">
+                  <img src="Images/Products/Personal.png" alt="Personal" class="card-thumb">
                   <h3>Cosmic SE</h3>
                   <p class="card-price">₱32,999</p>
                   <div class="card-details">
@@ -193,7 +236,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-1">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ps-1">
+                    <input type="hidden" name="name" value="Cosmic SE">
+                    <input type="hidden" name="specs" value="Intel Core i3 • 8GB RAM • 256GB SSD">
+                    <input type="hidden" name="price" value="32999">
+                    <input type="hidden" name="image" value="Images/Products/Personal.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -202,7 +252,7 @@ include 'header.php';
             <div class="product-card" id="card-ps-2">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Personal" class="card-thumb">
+                  <img src="Images/Products/Personal.png" alt="Personal" class="card-thumb">
                   <h3>Cosmic Pro</h3>
                   <p class="card-price">₱58,999</p>
                   <div class="card-details">
@@ -216,7 +266,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-2">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ps-2">
+                    <input type="hidden" name="name" value="Cosmic Pro">
+                    <input type="hidden" name="specs" value="Intel Core i5 • 16GB RAM • 512GB SSD">
+                    <input type="hidden" name="price" value="58999">
+                    <input type="hidden" name="image" value="Images/Products/Personal.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -225,7 +282,7 @@ include 'header.php';
             <div class="product-card" id="card-ps-3">
               <div class="card-inner">
                 <div>
-                  <img src="Images/Products/Workstation.png" alt="Personal" class="card-thumb">
+                  <img src="Images/Products/Personal.png" alt="Personal" class="card-thumb">
                   <h3>Cosmic Eclipse</h3>
                   <p class="card-price">₱99,999</p>
                   <div class="card-details">
@@ -239,7 +296,14 @@ include 'header.php';
                 </div>
                 <div class="card-actions">
                   <button class="btn-text-toggle" data-card-id="card-ps-3">View More</button>
-                  <button class="btn-pill card-btn-pill">Add to Cart</button>
+                  <form action="Cart/add_to_cart.php" method="POST" style="display: inline; width: 100%;">
+                    <input type="hidden" name="product_id" value="ps-3">
+                    <input type="hidden" name="name" value="Cosmic Eclipse">
+                    <input type="hidden" name="specs" value="Intel Core Ultra 7 • 32GB RAM • 1TB SSD">
+                    <input type="hidden" name="price" value="99999">
+                    <input type="hidden" name="image" value="Images/Products/Personal.png">
+                    <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -251,7 +315,5 @@ include 'header.php';
 
     </div>
   </main>
-
-<script src="script.js"></script>
 
 <?php include 'footer.php'; ?>
