@@ -259,3 +259,58 @@ document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('product-modal');
+    const openAddBtn = document.getElementById('open-add-modal-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const productForm = document.getElementById('product-form');
+    const modalTitle = document.getElementById('modal-title');
+    const formAction = document.getElementById('form-action');
+    const formProductId = document.getElementById('form-product-id');
+
+    if (openAddBtn && modal) {
+        openAddBtn.addEventListener('click', function() {
+            modalTitle.textContent = 'Add New Product';
+            formAction.value = 'add';
+            formProductId.value = '';
+            productForm.reset();
+            document.getElementById('form-image').value = 'Images/Products/Workstation.png';
+            modal.style.display = 'flex';
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Handle Edit button clicks delegation
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function() {
+            modalTitle.textContent = 'Edit Product';
+            formAction.value = 'edit';
+            formProductId.value = this.dataset.id;
+
+            document.getElementById('form-name').value = this.dataset.name;
+            document.getElementById('form-category').value = this.dataset.category;
+            document.getElementById('form-tier').value = this.dataset.tier;
+            document.getElementById('form-price').value = this.dataset.price;
+            document.getElementById('form-processor').value = this.dataset.processor;
+            document.getElementById('form-ram').value = this.dataset.ram;
+            document.getElementById('form-storage').value = this.dataset.storage;
+            document.getElementById('form-graphics').value = this.dataset.graphics;
+            document.getElementById('form-image').value = this.dataset.image;
+            document.getElementById('form-stock').value = this.dataset.stock;
+
+            modal.style.display = 'flex';
+        });
+    });
+});
