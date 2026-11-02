@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }} | Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: 70px 1fr auto;
+            grid-template-areas:
+                "header  header"
+                "sidebar content"
+                "footer  footer";
+            min-height: 100vh;
+        }
+
+        .dashboard__header  { grid-area: header; }
+        .dashboard__sidebar { grid-area: sidebar; border-right: 1px solid var(--bs-border-color); }
+        .dashboard__content { grid-area: content; padding: 2rem; min-width: 0; }
+        .dashboard__footer  { grid-area: footer; }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: 70px auto 1fr auto;
+                grid-template-areas:
+                    "header"
+                    "sidebar"
+                    "content"
+                    "footer";
+            }
+
+            .dashboard__sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--bs-border-color);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard">
+        <header class="dashboard__header">
+            {{ render(controller('App\\Controller\\DashboardHeaderController::index')) }}
+        </header>
+
+        <aside class="dashboard__sidebar">
+            {{ render(controller('App\\Controller\\DashboardSidebarController::index')) }}
+        </aside>
+
+        <main class="dashboard__content">
+            <h1 class="h3 mb-4">{{ page_title }}</h1>
+
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="dashboard__footer">
+            {{ render(controller('App\\Controller\\DashboardFooterController::index')) }}
+        </footer>
+    </div>
+{% endblock %}

@@ -1,24 +1,54 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Admin{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    {% block stylesheets %}
+        <style>
+            [data-bs-theme="dark"] {
+                --bs-body-bg: #0b0f1a;
+                --bs-body-color: #E2E8F0;
+                --bs-body-font-family: 'Goldman', sans-serif;
+                --bs-border-color: rgba(168, 196, 218, 0.2);
+                --bs-tertiary-bg: #10141c;
+            }
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+            .btn-primary {
+                --bs-btn-bg: #A8C4DA;
+                --bs-btn-border-color: #A8C4DA;
+                --bs-btn-color: #181E28;
+                --bs-btn-hover-bg: #8fb0cb;
+                --bs-btn-hover-border-color: #8fb0cb;
+                --bs-btn-hover-color: #181E28;
+                --bs-btn-active-bg: #7da1bf;
+                --bs-btn-active-border-color: #7da1bf;
+                --bs-btn-active-color: #181E28;
+            }
 
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+            .card {
+                --bs-card-bg: rgba(18, 30, 49, 0.7);
+            }
+
+            .modal-content {
+                --bs-modal-bg: #121e31;
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="{{ asset('js/dashboard-crud.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+</body>
 </html>

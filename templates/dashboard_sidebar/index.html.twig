@@ -1,0 +1,15 @@
+<style>
+    .sidebar-nav {
+        --bs-nav-pills-link-active-bg: rgba(168, 196, 218, 0.15);
+        --bs-nav-pills-link-active-color: #A8C4DA;
+        --bs-nav-link-color: #E2E8F0;
+        --bs-nav-link-hover-color: #A8C4DA;
+    }
+</style>
+
+<nav class="nav nav-pills flex-column gap-1 p-3 sidebar-nav">
+    {% for item in menu %}
+        <a class="nav-link{{ (current_route ?? '') starts with item.prefix ? ' active' : '' }}"
+           href="{{ path(item.route) }}">{{ item.label }}</a>
+    {% endfor %}
+</nav>
