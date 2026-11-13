@@ -52,13 +52,14 @@ class ProductRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /** @return Product[] products a customer could buy right now */
-    public function findAvailable(): array
+    /** @return Product[] visible products, SE → Pro → Eclipse, for the store's products page */
+    public function findForStore(): array
     {
         return $this->createQueryBuilder('p')
+            ->addSelect("CASE WHEN p.tier = 'SE' THEN 1 WHEN p.tier = 'Pro' THEN 2 ELSE 3 END AS HIDDEN tierOrder")
             ->andWhere('p.visible = true')
-            ->andWhere('p.stock > 0')
-            ->orderBy('p.name', 'ASC')
+            ->orderBy('tierOrder', 'ASC')
+            ->addOrderBy('p.price', 'ASC')
             ->getQuery()
             ->getResult();
     }

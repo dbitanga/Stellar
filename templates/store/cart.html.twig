@@ -1,0 +1,130 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}Cart | STELLAR Laptops{% endblock %}
+
+{% macro summary_rows(quote, row_class) %}
+  <div class="{{ row_class }}"><span>Subtotal</span><span>₱{{ quote.subtotal|number_format(2) }}</span></div>
+  <div class="{{ row_class }}"><span>Tax</span><span>₱{{ quote.tax|number_format(2) }}</span></div>
+  <div class="{{ row_class }}"><span>Shipping Protection</span><span>₱{{ quote.shippingProtection|number_format(2) }}</span></div>
+  <div class="{{ row_class }}"><span>Estimated Shipping</span><span>₱{{ quote.shipping|number_format(2) }}</span></div>
+{% endmacro %}
+
+{% block body %}
+<main class="cart-wrapper">
+  <div class="cart-container">
+    <h1 class="cart-title">Your Shopping Cart</h1>
+
+    {% if lines is empty %}
+      <div class="empty-cart-state">
+        <p>Your cart is currently empty.</p>
+        <a href="{{ path('app_products') }}" class="btn-pill shop-more-btn">Explore Products</a>
+      </div>
+    {% else %}
+      {% set cart_token = csrf_token('cart') %}
+      <div class="cart-grid">
+
+        <div class="cart-items-list">
+          {% for line in lines %}
+            {% set product = line.product %}
+            <div class="cart-item-card">
+              <div class="cart-item-img-wrap">
+                <img src="{{ asset(product.imagePath) }}" alt="{{ product.name }}" class="cart-item-img">
+              </div>
+
+              <div class="cart-item-details">
+                <h3>{{ product.name }}</h3>
+                <p class="cart-item-specs">{{ product.processor }} • {{ product.ram }} • {{ product.storage }}</p>
+                <div class="cart-item-pricing">
+                  <span class="unit-price">Unit Price: ₱{{ product.price|number_format(2) }}</span>
+                  <span class="total-price">Total: ₱{{ (product.price * line.quantity)|number_format(2) }}</span>
+                </div>
+              </div>
+
+              <div class="cart-item-actions">
+                <div class="qty-form">
+                  <form method="post" action="{{ path('app_cart_change', {id: product.id, action: 'decrease'}) }}">
+                    <input type="hidden" name="_token" value="{{ cart_token }}">
+                    <button type="submit" class="qty-btn" aria-label="One less">−</button>
+                  </form>
+                  <span class="qty-display">{{ line.quantity }}</span>
+                  <form method="post" action="{{ path('app_cart_change', {id: product.id, action: 'increase'}) }}">
+                    <input type="hidden" name="_token" value="{{ cart_token }}">
+                    <button type="submit" class="qty-btn" aria-label="One more">+</button>
+                  </form>
+                </div>
+
+                <form method="post" action="{{ path('app_cart_change', {id: product.id, action: 'remove'}) }}">
+                  <input type="hidden" name="_token" value="{{ cart_token }}">
+                  <button type="submit" class="remove-btn">Remove</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-summary-card">
+          <h2>Order Summary</h2>
+          {{ _self.summary_rows(quote, 'summary-row') }}
+          <div class="summary-divider"></div>
+          <div class="summary-row grand-total">
+            <span>Total</span>
+            <span>₱{{ quote.total|number_format(2) }}</span>
+          </div>
+          <button type="button" id="openCheckoutBtn" class="btn-pill checkout-btn">Proceed to Checkout</button>
+        </div>
+
+      </div>
+
+      <div id="checkoutModal" class="checkout-modal-overlay">
+        <div class="checkout-modal-content custom-checkout-modal">
+          <h2>Complete Your Order</h2>
+
+          <div class="checkout-section">
+            <h3>Order Summary</h3>
+            <div class="checkout-items-scroll">
+              {% for line in lines %}
+                <div class="checkout-summary-row">
+                  <span>{{ line.product.name }} (x{{ line.quantity }})</span>
+                  <span>₱{{ (line.product.price * line.quantity)|number_format(2) }}</span>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="summary-divider"></div>
+            <div class="checkout-breakdown-box">
+              {{ _self.summary_rows(quote, 'checkout-sub-row') }}
+            </div>
+            <div class="summary-divider"></div>
+            <p class="checkout-total-text">
+              <span>Total Amount:</span>
+              <span>₱{{ quote.total|number_format(2) }}</span>
+            </p>
+          </div>
+
+          {{ form_start(checkout_form, {attr: {id: 'checkoutForm'}}) }}
+            <div class="checkout-section">
+              <h3>Delivery Information</h3>
+              {% for field in [checkout_form.shippingName, checkout_form.shippingAddress, checkout_form.shippingMobile] %}
+                <div class="form-group">
+                  {{ form_label(field, null, {label_attr: {class: 'checkout-label'}}) }}
+                  {{ form_widget(field, {attr: {class: 'checkout-input'}|merge(field.vars.name == 'shippingAddress' ? {rows: 2} : {})}) }}
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="checkout-section checkout-payment-options">
+              <h3>Payment Method</h3>
+              {% for choice in checkout_form.paymentMethod %}
+                <label>{{ form_widget(choice) }} {{ choice.vars.label }}</label>
+              {% endfor %}
+            </div>
+
+            <div class="checkout-actions">
+              <button type="submit" class="btn-pill confirm-order-btn">Confirm Order</button>
+            </div>
+          {{ form_end(checkout_form) }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

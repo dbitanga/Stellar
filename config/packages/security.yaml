@@ -26,21 +26,22 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: app_root
+                # Used when the login wasn't triggered by a protected page; sends staff to the dashboard and customers to the store.
+                default_target_path: app_after_login
                 enable_csrf: true
             logout:
                 path: app_logout
-                target: app_login
+                target: app_home
                 enable_csrf: true
 
-    # Note: Only the *first* matching rule is applied.
+    # Note: Only the *first* matching rule is applied. Pages not listed (the store, login, sign-up) are public.
     # Admin-only areas are also guarded by #[IsGranted] on their controllers and hidden from the menu with is_granted().
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard$, roles: ROLE_ADMIN }
         - { path: ^/dashboard/(user|customer|payment), roles: ROLE_ADMIN }
-        - { path: ^/dashboard/order/(simulate|\d+/(pay|refund)), roles: ROLE_ADMIN }
-        - { path: ^/, roles: ROLE_STAFF }
+        - { path: ^/dashboard/order/\d+/(pay|refund), roles: ROLE_ADMIN }
+        - { path: ^/dashboard, roles: ROLE_STAFF }
+        - { path: ^/(cart|account), roles: ROLE_USER }
 
 when@test:
     security:

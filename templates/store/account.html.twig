@@ -1,0 +1,117 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}My Account | STELLAR Laptops{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('styles/auth.css') }}">
+{% endblock %}
+
+{% block body %}
+{% set user = app.user %}
+<main class="account-wrapper">
+  <div class="account-page">
+
+    <section class="account-card">
+      <h2>My Orders</h2>
+
+      {% if orders is empty %}
+        <p class="empty-state">You have no orders yet.</p>
+      {% else %}
+        <div class="orders-list">
+          {% for order in orders %}
+            <div class="order-item">
+              <div class="order-item-top">
+                <span class="order-summary">Order #{{ order.id }}</span>
+                <span class="order-status order-status-{{ order.orderStatus|lower|replace({' ': '-'}) }}">{{ order.orderStatus }}</span>
+              </div>
+              <ul class="order-line-items">
+                {% for item in order.items %}
+                  <li>{{ item.product.name }} × {{ item.quantity }} — ₱{{ item.priceAtPurchase|number_format(2) }} each</li>
+                {% endfor %}
+              </ul>
+              <div class="order-item-bottom">
+                <span class="order-price">Total: ₱{{ order.totalAmount|number_format(2) }}</span>
+                <span class="order-delivery">
+                  {{ order.paymentMethod == 'COD' ? 'Cash on delivery' : 'Card' }} · {{ order.paymentStatus }} · {{ order.createdAt|date('M j, Y') }}
+                </span>
+              </div>
+
+              {% if order.orderStatus == 'Delivered' and not order.returnRequestedAt %}
+                <form method="post" action="{{ path('app_account_order_return', {id: order.id}) }}" class="return-form">
+                  <input type="hidden" name="_token" value="{{ csrf_token('return_order' ~ order.id) }}">
+                  <label for="reason-{{ order.id }}">Return this order</label>
+                  <select id="reason-{{ order.id }}" name="reason" required>
+                    {% for reason in return_reasons %}
+                      <option value="{{ reason }}">{{ reason }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn-danger-outline">Request Return</button>
+                </form>
+              {% elseif order.returnRequestedAt %}
+                <p class="member-since">
+                  Return requested on {{ order.returnRequestedAt|date('M j, Y') }} ({{ order.returnReason }})
+                  {%- if order.orderStatus == 'Returned' %}: approved and refunded.
+                  {%- elseif order.orderStatus == 'Delivered' %}: not approved.
+                  {%- else %}: waiting for review.{% endif %}
+                </p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="account-card">
+      <h2>Account Information</h2>
+      {{ form_start(profile_form) }}
+        <label>Username</label>
+        <input type="text" value="{{ user.username }}" disabled>
+        {% for field, label in {firstName: 'First Name', middleName: 'Middle Name', lastName: 'Last Name', email: 'Email', mobileNumber: 'Mobile Number', deliveryAddress: 'Delivery Address'} %}
+          {{ form_label(profile_form[field], label) }}
+          {{ form_widget(profile_form[field]) }}
+        {% endfor %}
+        <p class="member-since">Member since {{ user.createdAt|date('F Y') }}</p>
+        <button type="submit" class="btn-account-save">Save Changes</button>
+      {{ form_end(profile_form) }}
+    </section>
+
+    <section class="account-card">
+      <h2>Change Password</h2>
+      {{ form_start(password_form) }}
+        {{ form_label(password_form.currentPassword, 'Current Password') }}
+        {{ form_widget(password_form.currentPassword) }}
+        {{ form_label(password_form.newPassword.first, 'New Password') }}
+        {{ form_widget(password_form.newPassword.first) }}
+        {{ form_label(password_form.newPassword.second, 'Repeat New Password') }}
+        {{ form_widget(password_form.newPassword.second) }}
+        <button type="submit" class="btn-account-save">Change Password</button>
+      {{ form_end(password_form) }}
+    </section>
+
+    {% if not is_granted('ROLE_STAFF') %}
+      <section class="account-card danger-zone">
+        <h2>Delete Account</h2>
+        <p class="danger-text">This permanently deletes your account. You will be logged out and won't be able to log in again.</p>
+        <button type="button" id="delete-account-trigger" class="btn-danger-outline">Delete Account</button>
+      </section>
+    {% endif %}
+
+  </div>
+</main>
+
+{% if not is_granted('ROLE_STAFF') %}
+  <div id="delete-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Delete your account?</h3>
+      <p>This will permanently delete your account. This cannot be undone.</p>
+      <div class="modal-actions">
+        <button type="button" id="cancel-delete" class="btn-secondary">Cancel</button>
+        <form method="post" action="{{ path('app_account_delete') }}">
+          <input type="hidden" name="_token" value="{{ csrf_token('delete_account') }}">
+          <button type="submit" class="btn-danger">Confirm Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

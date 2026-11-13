@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,6 +22,20 @@ class OrderRepository extends ServiceEntityRepository
             ->addSelect('u', 'i')
             ->join('o.user', 'u')
             ->leftJoin('o.items', 'i')
+            ->orderBy('o.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /** @return Order[] the customer's orders, newest first, with items and products loaded */
+    public function findForCustomer(User $customer): array
+    {
+        return $this->createQueryBuilder('o')
+            ->addSelect('i', 'p')
+            ->leftJoin('o.items', 'i')
+            ->leftJoin('i.product', 'p')
+            ->andWhere('o.user = :customer')
+            ->setParameter('customer', $customer)
             ->orderBy('o.id', 'DESC')
             ->getQuery()
             ->getResult();

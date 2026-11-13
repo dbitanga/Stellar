@@ -1,0 +1,60 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}Products | STELLAR Laptops{% endblock %}
+
+{% block body %}
+  <main class="products-wrapper">
+    <div class="products-container">
+
+      <section class="products-header-text">
+        <h1>STELLAR PRODUCTS</h1>
+        <p>Explore our lineup of high-performance, modular laptops.</p>
+      </section>
+
+      <div class="products-content-area">
+        {% set cart_token = csrf_token('cart') %}
+        {% for category, products in categories %}
+          <div class="product-category-group" id="{{ category|lower }}">
+            <div class="product-section-item">{{ category }}.</div>
+            <div class="cards-grid">
+
+              {% for product in products %}
+                {% set card_id = 'card-' ~ product.id %}
+                <div class="product-card" id="{{ card_id }}">
+                  <div class="card-inner">
+                    <div>
+                      <img src="{{ asset(product.imagePath) }}" alt="{{ category }}" class="card-thumb">
+                      <h3>{{ product.name }}</h3>
+                      <p class="card-price">₱{{ product.price|number_format(2) }}</p>
+                      <div class="card-details">
+                        <p class="spec-text"><strong>Processor:</strong> {{ product.processor }}</p>
+                        <p class="spec-text"><strong>Graphics:</strong> {{ product.graphics }}</p>
+                        <p class="spec-text"><strong>Memory:</strong> {{ product.ram }}</p>
+                        <p class="spec-text"><strong>Storage:</strong> {{ product.storage }}</p>
+                      </div>
+                    </div>
+                    <div class="card-actions">
+                      <button type="button" class="btn-text-toggle" data-card-id="{{ card_id }}">View More</button>
+                      <form action="{{ path('app_cart_add', {id: product.id}) }}" method="post" class="add-to-cart-form" data-login-url="{{ path('app_login') }}" style="display: inline; width: 100%;">
+                        <input type="hidden" name="_token" value="{{ cart_token }}">
+                        {% if product.stock > 0 %}
+                          <button type="submit" class="btn-pill card-btn-pill">Add to Cart</button>
+                        {% else %}
+                          <button type="button" class="btn-pill card-btn-pill" disabled>Sold Out</button>
+                        {% endif %}
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <p style="color: #A8C4DA; padding: 20px;">No products available in this category.</p>
+              {% endfor %}
+
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </main>
+{% endblock %}

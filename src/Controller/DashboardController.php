@@ -15,11 +15,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractController
 {
-    #[Route('/', name: 'app_root')]
-    public function root(): RedirectResponse
+    /** Where the login form sends people: admins to the dashboard, staff to orders (they can't open the dashboard), customers to the store. */
+    #[Route('/after-login', name: 'app_after_login', methods: ['GET'])]
+    public function afterLogin(): RedirectResponse
     {
-        // Staff cannot open the admin dashboard, so they land on the orders page.
-        return $this->redirectToRoute($this->isGranted('ROLE_ADMIN') ? 'app_dashboard_home' : 'app_dashboard_order_index');
+        return $this->redirectToRoute(match (true) {
+            $this->isGranted('ROLE_ADMIN') => 'app_dashboard_home',
+            $this->isGranted('ROLE_STAFF') => 'app_dashboard_order_index',
+            default => 'app_home',
+        });
     }
 
     #[Route('/dashboard', name: 'app_dashboard_home')]

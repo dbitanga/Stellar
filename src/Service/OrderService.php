@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Dto\Checkout;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\Product;
@@ -15,45 +16,40 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class OrderService
 {
-    public function __construct(private readonly EntityManagerInterface $em)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly Pricing $pricing,
+    ) {
     }
 
     /**
-     * Works like a store checkout: copies current prices, takes the quantities out of stock,
-     * and marks card payments as paid straight away (COD stays pending until delivery).
+     * Places the customer's order: copies current prices, takes the quantities out of stock,
+     * adds the store fees (see Pricing) to the total, and marks card payments as paid
+     * straight away (COD stays pending until delivery).
      *
-     * @param array<int, int> $quantities   product id => quantity
-     * @param string|null     $returnReason when set, the customer asks to return the order as soon as it is delivered
+     * @param array<int, int> $quantities product id => quantity
      */
-    public function place(User $customer, array $quantities, string $paymentMethod, ?string $returnReason = null): Order
+    public function place(User $customer, array $quantities, Checkout $checkout): Order
     {
-        if (null !== $returnReason && !\in_array($returnReason, Order::RETURN_REASONS, true)) {
-            throw new \DomainException('Choose a valid return reason.');
-        }
         $quantities = array_filter($quantities, static fn (?int $qty): bool => $qty > 0);
         if (!$quantities) {
-            throw new \DomainException('Choose at least one product.');
+            throw new \DomainException('Your cart is empty.');
         }
-        if (!\in_array($paymentMethod, Order::PAYMENT_METHODS, true)) {
+        if (!\in_array($checkout->paymentMethod, Order::PAYMENT_METHODS, true)) {
             throw new \DomainException('Choose a payment method.');
-        }
-        if (!$customer->getMobileNumber() || !$customer->getDeliveryAddress()) {
-            throw new \DomainException(sprintf('%s has no mobile number or delivery address.', $customer->getUsername()));
         }
 
         $order = (new Order())
             ->setUser($customer)
-            ->setPaymentMethod($paymentMethod)
-            ->setReturnReason($returnReason)
-            ->setPaymentStatus(Order::PAYMENT_CARD === $paymentMethod ? Order::PAYMENT_PAID : Order::PAYMENT_PENDING)
-            ->setShippingName($customer->getFullName() ?: (string) $customer->getUsername())
-            ->setShippingMobile($customer->getMobileNumber())
-            ->setShippingAddress($customer->getDeliveryAddress());
+            ->setPaymentMethod($checkout->paymentMethod)
+            ->setPaymentStatus(Order::PAYMENT_CARD === $checkout->paymentMethod ? Order::PAYMENT_PAID : Order::PAYMENT_PENDING)
+            ->setShippingName($checkout->shippingName)
+            ->setShippingMobile($checkout->shippingMobile)
+            ->setShippingAddress($checkout->shippingAddress);
 
         $this->em->beginTransaction();
         try {
-            $total = '0.00';
+            $lines = [];
             foreach ($quantities as $productId => $qty) {
                 // Row lock: two orders at once can't both take the last units.
                 $product = $this->em->find(Product::class, $productId, LockMode::PESSIMISTIC_WRITE);
@@ -69,10 +65,10 @@ class OrderService
                     ->setProduct($product)
                     ->setPriceAtPurchase($product->getPrice())
                     ->setQuantity($qty));
-                $total = bcadd($total, bcmul((string) $product->getPrice(), (string) $qty, 2), 2);
+                $lines[] = ['price' => (string) $product->getPrice(), 'quantity' => $qty];
             }
 
-            $order->setTotalAmount($total);
+            $order->setTotalAmount($this->pricing->quote($lines)->total);
             $this->em->persist($order);
             $this->em->flush();
             $this->em->commit();
@@ -91,10 +87,7 @@ class OrderService
         $this->em->flush();
     }
 
-    /**
-     * Cash on delivery is collected when the order arrives. If the customer planned a return,
-     * the order goes straight to "Return requested" for staff to review.
-     */
+    /** Cash on delivery is collected when the order arrives. */
     public function deliver(Order $order): void
     {
         $this->requireStatus($order, Order::STATUS_SHIPPED, 'delivered');
@@ -102,10 +95,19 @@ class OrderService
         if (Order::PAYMENT_PENDING === $order->getPaymentStatus()) {
             $order->setPaymentStatus(Order::PAYMENT_PAID);
         }
-        if (null !== $order->getReturnReason()) {
-            $order->setOrderStatus(Order::STATUS_RETURN_REQUESTED);
-            $order->setReturnRequestedAt(new \DateTimeImmutable());
+        $this->em->flush();
+    }
+
+    /** The customer asks to send back a delivered order; staff then approve (refund) or reject it. */
+    public function requestReturn(Order $order, string $reason): void
+    {
+        if (!\in_array($reason, Order::RETURN_REASONS, true)) {
+            throw new \DomainException('Choose a valid return reason.');
         }
+        $this->requireStatus($order, Order::STATUS_DELIVERED, 'returned');
+        $order->setReturnReason($reason);
+        $order->setReturnRequestedAt(new \DateTimeImmutable());
+        $order->setOrderStatus(Order::STATUS_RETURN_REQUESTED);
         $this->em->flush();
     }
 

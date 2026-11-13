@@ -1,0 +1,23 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}Order Confirmed | STELLAR Laptops{% endblock %}
+
+{% block body %}
+<main class="cart-wrapper">
+  <div class="cart-container" style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <div class="cart-summary-card order-confirmed-container" style="align-items: center; gap: 1.5rem; padding: 3rem;">
+      <h2>Order Confirmed!</h2>
+      <p class="confirmation-message">
+        Thank you for your purchase. Order #{{ order.id }} (₱{{ order.totalAmount|number_format(2) }})
+        has been placed and saved to your account.
+      </p>
+      <div class="delivery-estimate-box">
+        <span class="delivery-label">Estimated Delivery Window:</span>
+        <span class="delivery-date-highlight">{{ delivery_from|date('F j, Y') }} - {{ delivery_to|date('F j, Y') }}</span>
+      </div>
+      <a href="{{ path('app_account') }}" class="btn-pill confirm-order-btn" style="position: relative; display: inline-block; width: 100%; text-align: center; text-decoration: none;">View My Orders</a>
+      <a href="{{ path('app_products') }}" class="btn-text-toggle" style="color: #A8C4DA; text-decoration: none;">Continue Shopping</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

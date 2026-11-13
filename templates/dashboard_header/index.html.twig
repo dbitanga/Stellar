@@ -6,7 +6,7 @@
 </style>
 
 <div class="d-flex align-items-center justify-content-between gap-3 h-100 px-4 border-bottom bg-body-tertiary">
-    <span class="header-brand">{{ site_name }}</span>
+    <a class="header-brand text-reset text-decoration-none" href="{{ path('app_home') }}" title="View store">{{ site_name }}</a>
     <div class="d-flex align-items-center gap-3">
         <a class="small text-body-secondary text-decoration-none text-truncate" href="{{ path('app_profile') }}">
             {{ user_name }} <span class="badge text-bg-secondary">{{ role_label }}</span>

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Dto\Checkout;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
@@ -11,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-/** The return flow: the customer asks for a return at delivery, then staff review it. */
+/** The return flow: the customer asks for a return after delivery, then staff review it. */
 class OrderRefundTest extends WebTestCase
 {
     private KernelBrowser $client;
@@ -29,31 +30,33 @@ class OrderRefundTest extends WebTestCase
         }
     }
 
-    public function testSimulatedOrderWithReturnBecomesReturnRequestedOnDelivery(): void
+    public function testCustomerRequestsAReturnFromTheirAccountPage(): void
     {
-        $product = $this->product(stock: 10);
-        $customer = $this->customer();
-        $this->client->loginUser($this->user('admin1', User::ROLE_ADMIN));
-
-        $crawler = $this->client->request('GET', '/dashboard/order');
-        $this->client->submit($crawler->selectButton('Place order')->form([
-            'simulate_order[customer]' => $customer->getId(),
-            'simulate_order[paymentMethod]' => Order::PAYMENT_COD,
-            'simulate_order[returnReason]' => 'Defective',
-            'simulate_order[qty_'.$product->getId().']' => 2,
-        ]));
-        self::assertResponseRedirects();
-
-        $order = $this->em->getRepository(Order::class)->findOneBy([]);
-        self::assertSame('Defective', $order->getReturnReason());
-        self::assertSame(Order::STATUS_PROCESSING, $order->getOrderStatus());
-
-        $this->orders->ship($order);
-        $this->orders->deliver($order);
-
-        self::assertSame(Order::STATUS_RETURN_REQUESTED, $order->getOrderStatus());
+        $order = $this->deliveredOrder(quantity: 2, stockBefore: 10, returnReason: null);
         self::assertSame(Order::PAYMENT_PAID, $order->getPaymentStatus(), 'COD is collected on delivery, so there is something to refund');
+
+        $this->client->loginUser($order->getUser());
+        $crawler = $this->client->request('GET', '/account');
+        $this->client->submit($crawler->selectButton('Request Return')->form(['reason' => 'Defective']));
+
+        self::assertResponseRedirects('/account');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.store-flash-success', "Return requested for order #{$order->getId()}");
+
+        $this->em->clear();
+        $order = $this->em->find(Order::class, $order->getId());
+        self::assertSame(Order::STATUS_RETURN_REQUESTED, $order->getOrderStatus());
+        self::assertSame('Defective', $order->getReturnReason());
         self::assertNotNull($order->getReturnRequestedAt());
+    }
+
+    public function testCustomerCannotRequestAReturnForSomeoneElsesOrder(): void
+    {
+        $order = $this->deliveredOrder(quantity: 1, stockBefore: 5, returnReason: null);
+        $this->client->loginUser($this->user('other', User::ROLE_USER));
+
+        $this->client->request('POST', "/account/order/{$order->getId()}/return", ['reason' => 'Defective']);
+        self::assertResponseStatusCodeSame(404);
     }
 
     public function testOrderWithoutReturnStaysDeliveredAndHasNoRefundButton(): void
@@ -121,9 +124,13 @@ class OrderRefundTest extends WebTestCase
     private function deliveredOrder(int $quantity, int $stockBefore, ?string $returnReason = 'Defective'): Order
     {
         $product = $this->product($stockBefore);
-        $order = $this->orders->place($this->customer(), [$product->getId() => $quantity], Order::PAYMENT_COD, $returnReason);
+        $customer = $this->customer();
+        $order = $this->orders->place($customer, [$product->getId() => $quantity], Checkout::forCustomer($customer));
         $this->orders->ship($order);
         $this->orders->deliver($order); // COD becomes Paid on delivery
+        if (null !== $returnReason) {
+            $this->orders->requestReturn($order, $returnReason);
+        }
 
         return $order;
     }

@@ -1,0 +1,46 @@
+{% extends 'store/base.html.twig' %}
+
+{% block body %}
+  <section class="fade-section">
+    <img src="{{ asset('images/Homepage/Brand.jpg') }}" alt="STELLAR Brand Hero" class="section-img">
+    <img src="{{ asset('images/Homepage/Brand Laptop.png') }}" alt="STELLAR Laptop" class="brand-laptop">
+    <a href="{{ path('app_products') }}" class="btn-pill explore-btn">Explore Models</a>
+  </section>
+
+  <section class="fade-section">
+    <img src="{{ asset('images/Homepage/2 Selection.jpg') }}" alt="Choose your STELLAR model" class="section-img">
+
+    <div class="selection-cards">
+      <a href="{{ path('app_products') }}#workstation" aria-label="Workstation">
+        <img src="{{ asset('images/Homepage/Workstation Card.png') }}" alt="Workstation laptop">
+      </a>
+      <a href="{{ path('app_products') }}#gaming" aria-label="Gaming">
+        <img src="{{ asset('images/Homepage/Gaming Card.png') }}" alt="Gaming laptop">
+      </a>
+      <a href="{{ path('app_products') }}#personal" aria-label="Personal">
+        <img src="{{ asset('images/Homepage/Personal Card.png') }}" alt="Personal laptop">
+      </a>
+    </div>
+  </section>
+
+  <section class="fade-section">
+    <img src="{{ asset('images/Homepage/3 Cosmic.jpg') }}" alt="STELLAR Cosmic laptop" class="section-img">
+  </section>
+
+  <section class="fade-section">
+    <img src="{{ asset('images/Homepage/4 Reviews.jpg') }}" alt="Customer review" class="section-img">
+  </section>
+
+  <section id="about-us" class="fade-section">
+    <img src="{{ asset('images/Homepage/5 About Us.jpg') }}" alt="About STELLAR" class="section-img">
+
+    <div class="hotspot about-hotspot">
+      <a href="#about-us" class="about-link" aria-label="About Us"></a>
+    </div>
+  </section>
+
+  <section class="fade-section">
+    <img src="{{ asset('images/Homepage/6 Strip.jpg') }}" alt="Modular, repairable, built to last" class="section-img">
+    <a href="{{ path('app_products') }}" class="btn-pill shop-now-btn">Shop Now</a>
+  </section>
+{% endblock %}

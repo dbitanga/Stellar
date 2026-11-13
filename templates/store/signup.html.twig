@@ -1,0 +1,48 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}Sign Up | STELLAR Laptops{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('styles/auth.css') }}">
+{% endblock %}
+
+{% macro field(field, label, placeholder) %}
+  {{ form_label(field, label) }}
+  {{ form_widget(field, {attr: {placeholder: placeholder}}) }}
+  {% for error in field.vars.errors %}
+    <p class="form-error">{{ error.message }}</p>
+  {% endfor %}
+{% endmacro %}
+
+{% block body %}
+<main class="account-wrapper">
+  <div class="login-wrap">
+    <div class="login-card">
+      <a href="{{ path('app_home') }}" class="logo">STELLAR</a>
+      <p class="subtitle">Create your account</p>
+
+      {% for error in form.vars.errors %}
+        <p class="form-error">{{ error.message }}</p>
+      {% endfor %}
+
+      {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+        {{ _self.field(form.firstName, 'First Name', 'Juan') }}
+        {{ _self.field(form.lastName, 'Last Name', 'Dela Cruz') }}
+        {{ _self.field(form.username, 'Username', 'Choose a username') }}
+        {{ _self.field(form.email, 'Email', 'you@example.com') }}
+        {{ _self.field(form.mobileNumber, 'Mobile Number', '09XX XXX XXXX') }}
+        {{ _self.field(form.deliveryAddress, 'Delivery Address', 'Street, Barangay, City, Province') }}
+        {{ _self.field(form.plainPassword.first, 'Password', 'At least 8 characters') }}
+        {{ _self.field(form.plainPassword.second, 'Confirm Password', '••••••••') }}
+        {% for error in form.plainPassword.vars.errors %}
+          <p class="form-error">{{ error.message }}</p>
+        {% endfor %}
+
+        <button type="submit">Sign Up</button>
+      {{ form_end(form) }}
+
+      <p class="signup-line">Already have an account? <a href="{{ path('app_login') }}">Log in</a></p>
+    </div>
+  </div>
+</main>
+{% endblock %}

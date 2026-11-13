@@ -3,11 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Form\SimulateOrderType;
 use App\Repository\OrderRepository;
-use App\Repository\ProductRepository;
 use App\Service\OrderService;
-use App\Support\FormErrorsTrait;
+use App\Service\Pricing;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,77 +13,33 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * Staff process orders (ship, deliver, cancel, reject a return).
- * Only admins can simulate orders, mark them paid, or approve a return and refund it.
+ * Customers place orders on the store; staff process them here (ship, deliver, cancel, reject a return).
+ * Only admins can mark an order paid, or approve a return and refund it.
  */
 #[Route('/dashboard/order')]
 #[IsGranted('ROLE_STAFF')]
 class DashboardOrderController extends AbstractController
 {
-    use FormErrorsTrait;
-
     public function __construct(private readonly OrderService $orders)
     {
     }
 
     #[Route('', name: 'app_dashboard_order_index', methods: ['GET'])]
-    public function index(OrderRepository $orders, ProductRepository $products): Response
+    public function index(OrderRepository $orders): Response
     {
-        $available = $products->findAvailable();
-
         return $this->render('dashboard_order/index.html.twig', [
             'page_title' => 'Orders',
             'orders' => $orders->findAllWithDetails(),
-            'products' => $available,
-            'form' => $this->isGranted('ROLE_ADMIN')
-                ? $this->createForm(SimulateOrderType::class, null, [
-                    'products' => $available,
-                    'action' => $this->generateUrl('app_dashboard_order_simulate'),
-                ])
-                : null,
         ]);
     }
 
-    #[Route('/simulate', name: 'app_dashboard_order_simulate', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function simulate(Request $request, ProductRepository $products): Response
-    {
-        $form = $this->createForm(SimulateOrderType::class, null, ['products' => $products->findAvailable()]);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            $this->flashFormErrors($form);
-
-            return $this->redirectToRoute('app_dashboard_order_index');
-        }
-
-        $data = $form->getData();
-        $quantities = [];
-        foreach ($data as $field => $value) {
-            if (str_starts_with($field, 'qty_')) {
-                $quantities[(int) substr($field, 4)] = (int) $value;
-            }
-        }
-
-        try {
-            $order = $this->orders->place($data['customer'], $quantities, $data['paymentMethod'], $data['returnReason']);
-        } catch (\DomainException $e) {
-            $this->addFlash('danger', $e->getMessage());
-
-            return $this->redirectToRoute('app_dashboard_order_index');
-        }
-
-        $this->addFlash('success', sprintf('Order #%d placed for %s.', $order->getId(), $order->getShippingName()));
-
-        return $this->redirectToRoute('app_dashboard_order_show', ['id' => $order->getId()]);
-    }
-
     #[Route('/{id}', name: 'app_dashboard_order_show', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function show(Order $order): Response
+    public function show(Order $order, Pricing $pricing): Response
     {
         return $this->render('dashboard_order/show.html.twig', [
             'page_title' => sprintf('Order #%d', $order->getId()),
             'order' => $order,
+            'quote' => $pricing->quoteOrder($order),
         ]);
     }
 

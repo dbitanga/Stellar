@@ -1,0 +1,25 @@
+{% extends 'store/base.html.twig' %}
+
+{% block title %}Account Created | STELLAR Laptops{% endblock %}
+
+{% block body %}
+<main class="cart-wrapper">
+  <div class="cart-container" style="max-width: 600px; margin: 0 auto; text-align: center;">
+    <h1 class="cart-title">Account Created</h1>
+
+    <div class="cart-summary-card" style="align-items: center; gap: 1.5rem; padding: 3rem;">
+      <p style="color: var(--text-light); font-size: 1.1rem;">
+        Welcome, {{ username }}! Your account is ready.
+      </p>
+
+      <a href="{{ path('app_login') }}" class="btn-pill" style="position: relative; display: inline-block; width: 100%; text-align: center; text-decoration: none;">
+        Log In Now
+      </a>
+
+      <a href="{{ path('app_home') }}" class="btn-text-toggle" style="color: #A8C4DA; text-decoration: none; margin-top: 1rem;">
+        Back to STELLAR
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

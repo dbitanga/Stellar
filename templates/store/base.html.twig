@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}STELLAR Laptops{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('styles/shop.css') }}">
+  {% block stylesheets %}{% endblock %}
+  <script src="{{ asset('js/shop.js') }}" defer></script>
+</head>
+<body>
+  {% set route = app.current_route %}
+
+  <div class="site-wrapper">
+
+    <header class="fade-section site-header">
+      <img src="{{ asset('images/Homepage/Header.jpg') }}" alt="STELLAR header background" class="section-img">
+
+      <nav class="site-nav">
+        <a href="{{ path('app_home') }}" class="{{ route == 'app_home' ? 'active' }}">Home</a>
+        <a href="{{ path('app_products') }}" class="{{ route == 'app_products' ? 'active' }}">Products</a>
+        <a href="{{ path('app_home') }}#about-us">About Us</a>
+      </nav>
+
+      <div class="header-hotspot">
+        {% if app.user %}
+          {% if is_granted('ROLE_STAFF') %}
+            <a href="{{ path('app_after_login') }}" class="logout-link">Dashboard</a>
+          {% endif %}
+          <a href="{{ path('app_cart') }}" class="account-icon-link" aria-label="Cart">
+            <img src="{{ asset('images/Account/Cart.png') }}" alt="Cart">
+          </a>
+          <a href="{{ path('app_account') }}" class="account-icon-link" aria-label="Account">
+            <img src="{{ asset('images/Account/Account.png') }}" alt="Account">
+          </a>
+          <form method="post" action="{{ path('app_logout') }}" class="logout-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+            <button type="submit" class="logout-link">Log Out</button>
+          </form>
+        {% elseif route not in ['app_login', 'app_signup'] %}
+          <a href="{{ path('app_login') }}" class="signin-link" aria-label="Sign in">Sign In</a>
+        {% endif %}
+      </div>
+    </header>
+
+    {% for type, messages in app.flashes(['success', 'danger']) %}
+      {% for message in messages %}
+        <div class="store-flash store-flash-{{ type }}" role="status">{{ message }}</div>
+      {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+
+    <section class="fade-section">
+      <img src="{{ asset('images/Homepage/7 Footer.jpg') }}" alt="Experience STELLAR in person" class="section-img">
+
+      <div class="hotspot footer-hotspot">
+        <a href="{{ path('app_products') }}" class="footer-shop-link" aria-label="Shop Now"></a>
+      </div>
+
+      <div class="social-icons">
+        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+          <img src="{{ asset('images/Social/Instagram.png') }}" alt="Instagram">
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube">
+          <img src="{{ asset('images/Social/Youtube.png') }}" alt="YouTube">
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <img src="{{ asset('images/Social/Linkedin.png') }}" alt="LinkedIn">
+        </a>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

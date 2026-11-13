@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,7 +24,8 @@ class ProfileType extends AbstractType
             ->add('middleName', TextType::class, ['required' => false])
             ->add('lastName', TextType::class, ['required' => false])
             ->add('email', EmailType::class, ['required' => false])
-            ->add('mobileNumber', TelType::class, ['required' => false]);
+            ->add('mobileNumber', TelType::class, ['required' => false])
+            ->add('deliveryAddress', TextareaType::class, ['required' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

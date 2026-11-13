@@ -74,7 +74,7 @@ class Order
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    /** Set when the (simulated) customer will send the order back once it arrives. */
+    /** Set when the customer asks to send a delivered order back. */
     #[ORM\Column(length: 30, nullable: true)]
     #[Assert\Choice(choices: self::RETURN_REASONS)]
     private ?string $returnReason = null;

@@ -9,22 +9,15 @@ use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Stops disabled accounts, and store customers who signed up on the website, from logging in to the admin panel.
+ * Stops disabled accounts from logging in. Customers can log in to the store;
+ * access_control keeps them out of the dashboard.
  */
 class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
     {
-        if (!$user instanceof User) {
-            return;
-        }
-
-        if (!$user->isActive()) {
+        if ($user instanceof User && !$user->isActive()) {
             throw new CustomUserMessageAccountStatusException('This account has been disabled.');
-        }
-
-        if (User::ROLE_USER === $user->getRole()) {
-            throw new CustomUserMessageAccountStatusException('This account does not have access to the admin panel.');
         }
     }
 

@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\CartRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CartRepository::class)]
 #[ORM\Table(name: 'cart')]
 #[ORM\UniqueConstraint(name: 'uniq_cart_user_product', columns: ['user_id', 'product_id'])]
 class Cart

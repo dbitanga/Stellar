@@ -78,19 +78,24 @@ class AccessControlTest extends WebTestCase
 
         $this->submitLogin('staff1', self::PASSWORD);
 
-        self::assertResponseRedirects('/');
+        self::assertResponseRedirects('/after-login');
         $this->client->followRedirect();
         self::assertResponseRedirects('/dashboard/order');
     }
 
-    public function testStoreCustomerCannotLogInToTheAdminPanel(): void
+    public function testCustomerLogsInToTheStoreButCannotOpenTheDashboard(): void
     {
         $this->createUser('shopper', User::ROLE_USER);
 
         $this->submitLogin('shopper', self::PASSWORD);
+        self::assertResponseRedirects('/after-login');
         $this->client->followRedirect();
+        self::assertResponseRedirects('/');
 
-        self::assertSelectorTextContains('.alert-danger', 'does not have access to the admin panel');
+        foreach (['/dashboard', '/dashboard/order', '/dashboard/product'] as $url) {
+            $this->client->request('GET', $url);
+            self::assertResponseStatusCodeSame(403, "A customer should not open $url");
+        }
     }
 
     public function testDisabledAccountCannotLogIn(): void
@@ -100,7 +105,7 @@ class AccessControlTest extends WebTestCase
         $this->submitLogin('former', self::PASSWORD);
         $this->client->followRedirect();
 
-        self::assertSelectorTextContains('.alert-danger', 'disabled');
+        self::assertSelectorTextContains('.form-error', 'disabled');
     }
 
     public function testLogoutNeedsAPostWithAValidToken(): void
@@ -112,7 +117,7 @@ class AccessControlTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/dashboard/product');
         $this->client->submit($crawler->selectButton('Logout')->form());
-        self::assertResponseRedirects('/login');
+        self::assertResponseRedirects('/');
 
         $this->client->request('GET', '/dashboard/product');
         self::assertResponseRedirects('/login');
@@ -190,7 +195,7 @@ class AccessControlTest extends WebTestCase
     private function submitLogin(string $username, string $password): void
     {
         $crawler = $this->client->request('GET', '/login');
-        $this->client->submit($crawler->selectButton('Login')->form([
+        $this->client->submit($crawler->selectButton('Log In')->form([
             '_username' => $username,
             '_password' => $password,
         ]));
