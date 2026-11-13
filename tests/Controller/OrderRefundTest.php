@@ -37,7 +37,7 @@ class OrderRefundTest extends WebTestCase
 
         $this->client->loginUser($order->getUser());
         $crawler = $this->client->request('GET', '/account');
-        $this->client->submit($crawler->selectButton('Request Return')->form(['reason' => 'Defective']));
+        $this->client->submit($crawler->selectButton('Return')->form(['reason' => 'Defective']));
 
         self::assertResponseRedirects('/account');
         $this->client->followRedirect();

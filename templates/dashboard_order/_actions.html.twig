@@ -34,7 +34,9 @@
     </form>
 {% endif %}
 
-{% if is_granted('ROLE_ADMIN') and order.paymentStatus == 'Pending' and order.orderStatus != 'Cancelled' %}
+{# Cash on delivery can't be marked paid before delivery (delivery marks it paid on its own). #}
+{% if is_granted('ROLE_ADMIN') and order.paymentStatus == 'Pending' and order.orderStatus != 'Cancelled'
+    and (order.paymentMethod != 'COD' or order.orderStatus == 'Delivered') %}
     <form method="post" class="d-inline" action="{{ path('app_dashboard_order_pay', {id: order.id}) }}"
           data-confirm="Mark order #{{ order.id }} as paid?">
         <input type="hidden" name="_token" value="{{ csrf_token('pay_order' ~ order.id) }}">

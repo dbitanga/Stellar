@@ -2,11 +2,13 @@
 
 namespace App\Tests\Controller;
 
+use App\Dto\Checkout;
 use App\Entity\Cart;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Enum\ProductCategory;
+use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -139,6 +141,45 @@ class StoreTest extends WebTestCase
         // The order shows up in the customer's account and in the dashboard.
         $this->client->request('GET', '/account');
         self::assertSelectorTextContains('.orders-list', "Order #{$order->getId()}");
+    }
+
+    public function testCustomerCancelsAProcessingOrderAndStockGoesBack(): void
+    {
+        $product = $this->product('Nova SE', stock: 5);
+        $customer = $this->customer();
+        $order = static::getContainer()->get(OrderService::class)
+            ->place($customer, [$product->getId() => 2], Checkout::forCustomer($customer));
+
+        $this->client->loginUser($customer);
+        $crawler = $this->client->request('GET', '/account');
+        $this->client->submit($crawler->selectButton('Cancel')->form());
+
+        self::assertResponseRedirects('/account');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.store-flash-success', "Order #{$order->getId()} has been cancelled.");
+
+        $this->em->clear();
+        self::assertSame(Order::STATUS_CANCELLED, $this->em->find(Order::class, $order->getId())->getOrderStatus());
+        self::assertSame(5, $this->em->find(Product::class, $product->getId())->getStock());
+    }
+
+    public function testCashOnDeliveryCannotBeMarkedPaidBeforeDelivery(): void
+    {
+        $product = $this->product('Nova SE', stock: 5);
+        $customer = $this->customer();
+        $orders = static::getContainer()->get(OrderService::class);
+        $order = $orders->place($customer, [$product->getId() => 1], Checkout::forCustomer($customer));
+
+        $admin = (new User())->setUsername('admin1')->setRole(User::ROLE_ADMIN)->setPassword('not-used');
+        $this->em->persist($admin);
+        $this->em->flush();
+        $this->client->loginUser($admin);
+
+        $crawler = $this->client->request('GET', "/dashboard/order/{$order->getId()}");
+        self::assertCount(0, $crawler->selectButton('Mark paid'), 'No "Mark paid" button before delivery');
+
+        $this->expectException(\DomainException::class);
+        $orders->markPaid($order);
     }
 
     public function testCannotAddMoreThanInStock(): void

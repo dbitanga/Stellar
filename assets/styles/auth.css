@@ -79,6 +79,8 @@ label {
 
 input[type="text"],
 input[type="email"],
+input[type="tel"],
+select,
 input[type="password"],
 textarea {
   background: #10141c;
@@ -100,6 +102,8 @@ textarea {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
+input[type="tel"]:focus,
+select:focus,
 input[type="password"]:focus,
 textarea:focus {
   border-color: var(--text-light);
@@ -123,15 +127,14 @@ button[type="submit"]:hover {
 }
 
 .signup-line {
-  color: var(--text-light);
-  opacity: 0.75;
+  color: rgba(226, 232, 240, 0.75);
   font-size: 13px;
   text-align: center;
   margin-top: 24px;
 }
 
 .signup-line a {
-  color: var(--text-light);
+  color: #A8C4DA;
   opacity: 1;
   text-decoration: none;
 }
@@ -412,4 +415,49 @@ button[type="submit"]:hover {
 
 .btn-danger:hover {
   opacity: 0.85;
+}
+/* ---------- Order actions (cancel / return) ---------- */
+.order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.order-actions form {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.order-actions select {
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.order-actions button[type="submit"].btn-order-small {
+  width: auto;
+  margin: 0;
+  padding: 4px 12px;
+  font-size: 12px;
+  background: transparent;
+  color: #f28b82;
+  border: 1px solid #f28b82;
+  border-radius: var(--button-radius);
+}
+
+.order-actions button[type="submit"].btn-order-small:hover {
+  background: rgba(242, 139, 130, 0.1);
+}
+
+.order-note {
+  color: var(--text-light);
+  opacity: 0.6;
+  font-size: 12px;
+  margin-top: 10px;
+  line-height: 1.5;
 }

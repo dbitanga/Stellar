@@ -114,7 +114,11 @@
             <div class="checkout-section checkout-payment-options">
               <h3>Payment Method</h3>
               {% for choice in checkout_form.paymentMethod %}
-                <label>{{ form_widget(choice) }} {{ choice.vars.label }}</label>
+                <label>
+                  <input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" {{ choice.vars.checked ? 'checked' }} required>
+                  {{ choice.vars.label }}
+                </label>
+                {% do choice.setRendered %}
               {% endfor %}
             </div>
 

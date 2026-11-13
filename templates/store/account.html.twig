@@ -36,19 +36,27 @@
                 </span>
               </div>
 
-              {% if order.orderStatus == 'Delivered' and not order.returnRequestedAt %}
-                <form method="post" action="{{ path('app_account_order_return', {id: order.id}) }}" class="return-form">
-                  <input type="hidden" name="_token" value="{{ csrf_token('return_order' ~ order.id) }}">
-                  <label for="reason-{{ order.id }}">Return this order</label>
-                  <select id="reason-{{ order.id }}" name="reason" required>
-                    {% for reason in return_reasons %}
-                      <option value="{{ reason }}">{{ reason }}</option>
-                    {% endfor %}
-                  </select>
-                  <button type="submit" class="btn-danger-outline">Request Return</button>
-                </form>
+              {% if order.orderStatus == 'Processing' %}
+                <div class="order-actions">
+                  <form method="post" action="{{ path('app_account_order_cancel', {id: order.id}) }}" class="cancel-order-form" data-order-id="{{ order.id }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('cancel_order' ~ order.id) }}">
+                    <button type="submit" class="btn-order-small">Cancel</button>
+                  </form>
+                </div>
+              {% elseif order.orderStatus == 'Delivered' and not order.returnRequestedAt %}
+                <div class="order-actions">
+                  <form method="post" action="{{ path('app_account_order_return', {id: order.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('return_order' ~ order.id) }}">
+                    <select name="reason" aria-label="Return reason" required>
+                      {% for reason in return_reasons %}
+                        <option value="{{ reason }}">{{ reason }}</option>
+                      {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-order-small">Return</button>
+                  </form>
+                </div>
               {% elseif order.returnRequestedAt %}
-                <p class="member-since">
+                <p class="order-note">
                   Return requested on {{ order.returnRequestedAt|date('M j, Y') }} ({{ order.returnReason }})
                   {%- if order.orderStatus == 'Returned' %}: approved and refunded.
                   {%- elseif order.orderStatus == 'Delivered' %}: not approved.
@@ -98,6 +106,17 @@
 
   </div>
 </main>
+
+<div id="cancel-order-modal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Cancel order <span data-order-number></span>?</h3>
+    <p>The order will be cancelled and, if you paid by card, refunded. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" data-modal-close>Keep Order</button>
+      <button type="button" class="btn-danger" data-confirm-cancel>Cancel Order</button>
+    </div>
+  </div>
+</div>
 
 {% if not is_granted('ROLE_STAFF') %}
   <div id="delete-modal" class="modal-overlay">

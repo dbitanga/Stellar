@@ -116,7 +116,7 @@ class AccessControlTest extends WebTestCase
         self::assertResponseStatusCodeSame(405, 'A plain link must not log the user out');
 
         $crawler = $this->client->request('GET', '/dashboard/product');
-        $this->client->submit($crawler->selectButton('Logout')->form());
+        $this->client->submit($crawler->selectButton('Log Out')->form());
         self::assertResponseRedirects('/');
 
         $this->client->request('GET', '/dashboard/product');

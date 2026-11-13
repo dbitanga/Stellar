@@ -77,23 +77,42 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('app_account');
     }
 
+    /** Customers can cancel while the order is still processing; stock goes back and card payments are refunded. */
+    #[Route('/order/{id}/cancel', name: 'app_account_order_cancel', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function cancelOrder(Request $request, #[CurrentUser] User $user, Order $order, OrderService $orders): Response
+    {
+        return $this->applyToOwnOrder($request, $user, $order, 'cancel_order', function () use ($orders, $order): string {
+            $orders->cancel($order);
+
+            return sprintf('Order #%d has been cancelled.', $order->getId());
+        });
+    }
+
     #[Route('/order/{id}/return', name: 'app_account_order_return', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function requestReturn(Request $request, #[CurrentUser] User $user, Order $order, OrderService $orders): Response
+    {
+        return $this->applyToOwnOrder($request, $user, $order, 'return_order', function () use ($orders, $order, $request): string {
+            $orders->requestReturn($order, $request->getPayload()->getString('reason'));
+
+            return sprintf('Return requested for order #%d. We will review it shortly.', $order->getId());
+        });
+    }
+
+    /** Checks the order is the customer's own and the CSRF token is valid, runs the action, and flashes the result. */
+    private function applyToOwnOrder(Request $request, User $user, Order $order, string $tokenPrefix, callable $run): Response
     {
         if ($order->getUser() !== $user) {
             throw $this->createNotFoundException();
         }
-        if (!$this->isCsrfTokenValid('return_order'.$order->getId(), $request->getPayload()->getString('_token'))) {
+
+        if (!$this->isCsrfTokenValid($tokenPrefix.$order->getId(), $request->getPayload()->getString('_token'))) {
             $this->addFlash('danger', 'Invalid token. Please try again.');
-
-            return $this->redirectToRoute('app_account');
-        }
-
-        try {
-            $orders->requestReturn($order, $request->getPayload()->getString('reason'));
-            $this->addFlash('success', sprintf('Return requested for order #%d. We will review it shortly.', $order->getId()));
-        } catch (\DomainException $e) {
-            $this->addFlash('danger', $e->getMessage());
+        } else {
+            try {
+                $this->addFlash('success', $run());
+            } catch (\DomainException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
         }
 
         return $this->redirectToRoute('app_account');

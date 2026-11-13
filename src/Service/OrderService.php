@@ -157,6 +157,10 @@ class OrderService
         if (Order::STATUS_CANCELLED === $order->getOrderStatus() || Order::PAYMENT_PENDING !== $order->getPaymentStatus()) {
             throw new \DomainException(sprintf('Order #%d is not awaiting payment.', $order->getId()));
         }
+        // Cash on delivery is only collected once the customer has the order.
+        if (Order::PAYMENT_COD === $order->getPaymentMethod() && Order::STATUS_DELIVERED !== $order->getOrderStatus()) {
+            throw new \DomainException(sprintf('Order #%d is cash on delivery and can only be marked paid once it is delivered.', $order->getId()));
+        }
         $order->setPaymentStatus(Order::PAYMENT_PAID);
         $this->em->flush();
     }

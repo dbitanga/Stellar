@@ -8,6 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('styles/shop.css') }}">
   {% block stylesheets %}{% endblock %}
+  <script>
+    // After a cart change (see shop.js) the page reloads without replaying the fade-in.
+    try {
+      if (sessionStorage.getItem('stellarNoFade')) {
+        sessionStorage.removeItem('stellarNoFade');
+        document.documentElement.classList.add('no-fade');
+      }
+    } catch (e) {}
+  </script>
   <script src="{{ asset('js/shop.js') }}" defer></script>
 </head>
 <body>
@@ -15,29 +24,27 @@
 
   <div class="site-wrapper">
 
-    <header class="fade-section site-header">
+    <header class="page-section site-header">
       <img src="{{ asset('images/Homepage/Header.jpg') }}" alt="STELLAR header background" class="section-img">
 
       <nav class="site-nav">
         <a href="{{ path('app_home') }}" class="{{ route == 'app_home' ? 'active' }}">Home</a>
         <a href="{{ path('app_products') }}" class="{{ route == 'app_products' ? 'active' }}">Products</a>
-        <a href="{{ path('app_home') }}#about-us">About Us</a>
+        <a href="{{ path('app_cart') }}" class="{{ route == 'app_cart' ? 'active' }}">Cart</a>
       </nav>
+
+      {% if is_granted('ROLE_STAFF') %}
+        <div class="header-left">
+          <a href="{{ path('app_after_login') }}" class="header-link">Dashboard</a>
+        </div>
+      {% endif %}
 
       <div class="header-hotspot">
         {% if app.user %}
-          {% if is_granted('ROLE_STAFF') %}
-            <a href="{{ path('app_after_login') }}" class="logout-link">Dashboard</a>
-          {% endif %}
-          <a href="{{ path('app_cart') }}" class="account-icon-link" aria-label="Cart">
-            <img src="{{ asset('images/Account/Cart.png') }}" alt="Cart">
-          </a>
-          <a href="{{ path('app_account') }}" class="account-icon-link" aria-label="Account">
-            <img src="{{ asset('images/Account/Account.png') }}" alt="Account">
-          </a>
+          <a href="{{ path('app_account') }}" class="header-link {{ route == 'app_account' ? 'active' }}">Account</a>
           <form method="post" action="{{ path('app_logout') }}" class="logout-form">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-            <button type="submit" class="logout-link">Log Out</button>
+            <button type="submit" class="header-link">Log Out</button>
           </form>
         {% elseif route not in ['app_login', 'app_signup'] %}
           <a href="{{ path('app_login') }}" class="signin-link" aria-label="Sign in">Sign In</a>
@@ -53,7 +60,7 @@
 
     {% block body %}{% endblock %}
 
-    <section class="fade-section">
+    <section class="page-section">
       <img src="{{ asset('images/Homepage/7 Footer.jpg') }}" alt="Experience STELLAR in person" class="section-img">
 
       <div class="hotspot footer-hotspot">

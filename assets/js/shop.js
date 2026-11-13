@@ -88,6 +88,40 @@ if (checkoutModal) {
   });
 }
 
+// Cart + / − / Remove reload the page; skip the fade-in on that reload (read in base.html.twig).
+document.querySelectorAll('.cart-item-actions form').forEach((form) => {
+  form.addEventListener('submit', () => {
+    try { sessionStorage.setItem('stellarNoFade', '1'); } catch (e) {}
+  });
+});
+
+// Cancel-order confirmation on the account page, in the same style as the delete-account modal.
+const cancelModal = document.getElementById('cancel-order-modal');
+if (cancelModal) {
+  let pendingForm = null;
+  const closeCancel = () => { cancelModal.classList.remove('visible'); pendingForm = null; };
+
+  document.querySelectorAll('form.cancel-order-form').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      if (form.dataset.confirmed) return;
+      event.preventDefault();
+      pendingForm = form;
+      cancelModal.querySelector('[data-order-number]').textContent = '#' + form.dataset.orderId;
+      cancelModal.classList.add('visible');
+    });
+  });
+
+  cancelModal.querySelector('[data-confirm-cancel]').addEventListener('click', () => {
+    if (!pendingForm) return;
+    pendingForm.dataset.confirmed = '1';
+    pendingForm.submit();
+  });
+  cancelModal.querySelector('[data-modal-close]').addEventListener('click', closeCancel);
+  cancelModal.addEventListener('click', (event) => {
+    if (event.target === cancelModal) closeCancel();
+  });
+}
+
 // Delete-account confirmation on the account page.
 const deleteModal = document.getElementById('delete-modal');
 if (deleteModal) {

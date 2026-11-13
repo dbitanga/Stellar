@@ -22,7 +22,7 @@ class CheckoutType extends AbstractType
             ->add('paymentMethod', ChoiceType::class, [
                 'label' => 'Payment method',
                 'expanded' => true,
-                'choices' => ['Cash on delivery' => 'COD', 'Card (paid now)' => 'Card'],
+                'choices' => ['Cash on delivery' => 'COD', 'Card' => 'Card'],
             ]);
     }
 

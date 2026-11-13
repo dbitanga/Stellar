@@ -95,36 +95,10 @@ body {
   text-decoration: underline;
 }
 
-.account-icon-link {
-  display: flex;
-  align-items: center;
-}
 
-.account-icon-link img {
-  width: 1.6vw;
-  min-width: 20px;
-  display: block;
-  transition: transform 0.25s ease;
-}
 
-.account-icon-link:hover img {
-  transform: scale(1.15);
-}
 
-.logout-link {
-  color: #A8C4DA;
-  font-family: 'Goldman', sans-serif;
-  font-size: clamp(0.75rem, 0.85vw, 1.4rem);
-  letter-spacing: 0.03em;
-  text-decoration: none;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-}
 
-.logout-link:hover {
-  text-decoration: underline;
-}
 
 .site-nav {
   position: absolute;
@@ -283,11 +257,11 @@ body {
   width: 1.5vw;   
   min-width: 18px;
   display: block;
-  transition: transform 0.25s ease; 
+  transition: filter 0.25s ease; 
 }
 
 .social-icons img:hover {
-  transform: scale(1.15); 
+  filter: brightness(0.75);
 }
 
 /* --- Products Page Auto-Adjusting Layout --- */
@@ -1045,12 +1019,6 @@ body {
   margin: 0;
 }
 
-.logout-form .logout-link {
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
 
 .store-flash {
   max-width: 900px;
@@ -1082,4 +1050,66 @@ body {
   gap: 0.5rem;
   color: var(--text-light);
   margin-bottom: 0.4rem;
+}
+
+/* Header and footer stay put; only the page body fades in. */
+.page-section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Set right after a cart change so the reload doesn't replay the fade. */
+.no-fade .fade-section {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* Header text links (Dashboard, Account, Log Out, Sign In) all share one size. */
+.header-left {
+  position: absolute;
+  top: 47%;
+  left: 8%;
+  height: 6%;
+  display: flex;
+  align-items: center;
+}
+
+.header-link,
+.logout-form button.header-link,
+.signin-link {
+  color: #A8C4DA;
+  font-family: 'Goldman', sans-serif;
+  font-size: clamp(0.75rem, 0.85vw, 1.4rem);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.header-link:hover,
+.logout-form button.header-link:hover {
+  text-decoration: underline;
+  background: none;
+}
+
+.logout-form {
+  flex-direction: row;
+}
+
+/* A normal-sized pill button that sits in the page flow. */
+.btn-pill.btn-pill-inline {
+  position: static;
+  display: inline-block;
+  font-size: 0.95rem;
+  padding: 0.55em 1.6em;
 }
