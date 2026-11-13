@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ page_title }} | Admin{% endblock %}
+{% block title %}{{ page_title }} | STELLAR Admin{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -68,5 +68,24 @@
         <footer class="dashboard__footer">
             {{ render(controller('App\\Controller\\DashboardFooterController::index')) }}
         </footer>
+    </div>
+
+    {# Shared confirmation dialog for every form with a data-confirm attribute (see dashboard-crud.js). #}
+    <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirm-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="confirm-modal-title">Please confirm</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0" data-confirm-message></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Go back</button>
+                    <button type="button" class="btn btn-danger" data-confirm-accept>Confirm</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

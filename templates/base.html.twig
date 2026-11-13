@@ -37,6 +37,17 @@
 
             .modal-content {
                 --bs-modal-bg: #121e31;
+                .card table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:before,
+                .card table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after {
+                    color: #A8C4DA;
+                    opacity: 0.45;
+                }
+
+                .card table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order:before,
+                .card table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order:after {
+                    color: #A8C4DA;
+                    opacity: 0.9;
+                }
             }
         </style>
     {% endblock %}

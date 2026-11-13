@@ -30,6 +30,55 @@
                 data-crud-action="{{ path('app_dashboard_product_new') }}">Add product</button>
     </div>
 
+    <form method="get" action="{{ path('app_dashboard_product_index') }}" class="card mb-3">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-12 col-md-4 col-xl-3">
+                <label for="filter-q" class="form-label small mb-1">Search</label>
+                <input type="search" id="filter-q" name="q" value="{{ filter.q }}" maxlength="100"
+                       class="form-control" placeholder="Name, processor, graphics…">
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="filter-category" class="form-label small mb-1">Category</label>
+                <select id="filter-category" name="category" class="form-select">
+                    <option value="">All</option>
+                    {% for category in categories %}
+                        <option value="{{ category.value }}" {{ filter.category == category.value ? 'selected' }}>{{ category.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="filter-tier" class="form-label small mb-1">Tier</label>
+                <select id="filter-tier" name="tier" class="form-select">
+                    <option value="">All</option>
+                    {% for tier in tiers %}
+                        <option value="{{ tier }}" {{ filter.tier == tier ? 'selected' }}>{{ tier }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="filter-status" class="form-label small mb-1">Status</label>
+                <select id="filter-status" name="status" class="form-select">
+                    <option value="">All</option>
+                    {% for value, label in {visible: 'Visible', hidden: 'Hidden', low_stock: 'Low stock'} %}
+                        <option value="{{ value }}" {{ filter.status == value ? 'selected' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-xl-1">
+                <div class="form-check mb-2">
+                    <input type="checkbox" id="filter-mine" name="mine" value="1" class="form-check-input" {{ filter.mine ? 'checked' }}>
+                    <label for="filter-mine" class="form-check-label">Mine only</label>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-xl-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-fill">Filter</button>
+                {% if filter.active %}
+                    <a href="{{ path('app_dashboard_product_index') }}" class="btn btn-outline-secondary flex-fill">Clear</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-hover align-middle w-100" data-datatable>
@@ -42,6 +91,7 @@
                         <th>Price</th>
                         <th>Stock</th>
                         <th>Status</th>
+                        <th>Created by</th>
                         <th data-orderable="false">Actions</th>
                     </tr>
                 </thead>
@@ -50,7 +100,7 @@
                         <tr class="{{ product.visible ? '' : 'row-hidden' }}">
                             <td><img class="product-thumb" src="{{ asset(product.imagePath) }}" alt="{{ product.name }}"></td>
                             <td>{{ product.name }}</td>
-                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.category.label }}</td>
                             <td>{{ product.tier }}</td>
                             <td data-order="{{ product.price }}">₱{{ product.price|number_format(2) }}</td>
                             <td>{{ product.stock }}</td>
@@ -61,14 +111,16 @@
                                     <span class="badge text-bg-secondary">Hidden</span>
                                 {% endif %}
                             </td>
+                            <td>{{ product.createdBy.username ?? '—' }}</td>
                             <td class="text-nowrap">
+                                {% if is_granted('PRODUCT_MANAGE', product) %}
                                 <button type="button" class="btn btn-sm btn-primary" data-crud-open
                                         data-crud-modal="#product-modal"
                                         data-crud-title="Edit Product"
                                         data-crud-action="{{ path('app_dashboard_product_edit', {id: product.id}) }}"
                                         data-crud-values="{{ {
                                             name: product.name,
-                                            category: product.category.id,
+                                            category: product.category.value,
                                             tier: product.tier,
                                             price: product.price,
                                             stock: product.stock,
@@ -92,6 +144,9 @@
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_product' ~ product.id) }}">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>
+                                {% else %}
+                                    <span class="small text-body-secondary">View only</span>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

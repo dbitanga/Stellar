@@ -1,0 +1,95 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'dashboard/_badges.html.twig' as badges %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+        <p class="text-body-secondary mb-0">Process customer orders from payment to delivery.</p>
+        {% if form %}
+            <button type="button" class="btn btn-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#simulate-modal">Simulate order</button>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover align-middle w-100" data-datatable>
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th data-orderable="false">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td data-order="{{ order.id }}">#{{ order.id }}</td>
+                            <td data-order="{{ order.createdAt|date('U') }}">{{ order.createdAt|date('M j, Y g:i A') }}</td>
+                            <td>{{ order.shippingName }}</td>
+                            <td>{{ order.itemCount }}</td>
+                            <td data-order="{{ order.totalAmount }}">₱{{ order.totalAmount|number_format(2) }}</td>
+                            <td>{{ order.paymentMethod }} {{ badges.payment_status(order.paymentStatus) }}</td>
+                            <td>{{ badges.order_status(order.orderStatus) }}</td>
+                            <td class="text-nowrap">
+                                <a class="btn btn-sm btn-primary" href="{{ path('app_dashboard_order_show', {id: order.id}) }}">View</a>
+                                {% include 'dashboard_order/_actions.html.twig' with {back: 'app_dashboard_order_index'} %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if form %}
+        <div class="modal fade" id="simulate-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                {{ form_start(form, {attr: {class: 'modal-content'}}) }}
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5">Simulate order</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="small text-body-secondary">Places an order as if the customer checked out on the store. No real money is charged: card orders are marked paid, cash on delivery is collected when the order is delivered.</p>
+                        {{ form_row(form.customer) }}
+                        {{ form_row(form.paymentMethod) }}
+                        {{ form_row(form.returnReason) }}
+
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>In stock</th>
+                                        <th style="width: 6rem">Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                        <tr>
+                                            <td>{{ product.name }}</td>
+                                            <td>₱{{ product.price|number_format(2) }}</td>
+                                            <td>{{ product.stock }}</td>
+                                            <td>{{ form_widget(form['qty_' ~ product.id]) }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr><td colspan="4" class="text-body-secondary">No visible products in stock.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Place order</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .row-hidden td {
+            opacity: 0.55;
+        }
+
+        .row-hidden td:last-child {
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <p class="text-body-secondary">Customers create their own accounts on the store. You can disable an account to block its login.</p>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover align-middle w-100" data-datatable>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Orders</th>
+                        <th>Total spent</th>
+                        <th>Status</th>
+                        <th>Date joined</th>
+                        <th data-orderable="false">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in customers %}
+                        {% set user = row[0] %}
+                        <tr class="{{ user.active ? '' : 'row-hidden' }}">
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.fullName }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.mobileNumber }}</td>
+                            <td>{{ row.orderCount }}</td>
+                            <td data-order="{{ row.totalSpent }}">₱{{ row.totalSpent|number_format(2) }}</td>
+                            <td>
+                                {% if user.active %}
+                                    <span class="badge text-bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Disabled</span>
+                                {% endif %}
+                            </td>
+                            <td data-order="{{ user.createdAt|date('U') }}">{{ user.createdAt|date('M j, Y') }}</td>
+                            <td class="text-nowrap">
+                                <form method="post" class="d-inline"
+                                      action="{{ path('app_dashboard_user_toggle', {id: user.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">{{ user.active ? 'Disable' : 'Enable' }}</button>
+                                </form>
+
+                                <form method="post" class="d-inline"
+                                      action="{{ path('app_dashboard_user_delete', {id: user.id}) }}"
+                                      data-confirm="Delete {{ user.username }} permanently?">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_user' ~ user.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

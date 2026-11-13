@@ -9,7 +9,9 @@
 
 <nav class="nav nav-pills flex-column gap-1 p-3 sidebar-nav">
     {% for item in menu %}
-        <a class="nav-link{{ (current_route ?? '') starts with item.prefix ? ' active' : '' }}"
-           href="{{ path(item.route) }}">{{ item.label }}</a>
+        {% if is_granted(item.role) %}
+            <a class="nav-link{{ (current_route ?? '') starts with item.prefix ? ' active' : '' }}"
+               href="{{ path(item.route) }}">{{ item.label }}</a>
+        {% endif %}
     {% endfor %}
 </nav>

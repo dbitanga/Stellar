@@ -2,19 +2,21 @@
 
 namespace App\Entity;
 
+use App\Enum\ProductCategory;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: 'products')]
 class Product
 {
     public const TIERS = ['SE', 'Pro', 'Eclipse'];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: 'product_id')]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
@@ -22,7 +24,7 @@ class Product
     #[Assert\Length(max: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(name: 'tier_level', length: 20)]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: self::TIERS)]
     private ?string $tier = null;
@@ -58,7 +60,7 @@ class Product
     #[Assert\Length(max: 255)]
     private ?string $imagePath = null;
 
-    #[ORM\Column(options: ['default' => 10])]
+    #[ORM\Column(name: 'stock_quantity', options: ['default' => 10])]
     #[Assert\NotNull]
     #[Assert\PositiveOrZero]
     private ?int $stock = 10;
@@ -66,10 +68,13 @@ class Product
     #[ORM\Column(name: 'is_visible', options: ['default' => true])]
     private bool $visible = true;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(length: 20, enumType: ProductCategory::class)]
     #[Assert\NotNull(message: 'Please choose a category.')]
-    private ?Category $category = null;
+    private ?ProductCategory $category = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'user_id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $createdBy = null;
 
     public function getId(): ?int
     {
@@ -196,14 +201,26 @@ class Product
         return $this;
     }
 
-    public function getCategory(): ?Category
+    public function getCategory(): ?ProductCategory
     {
         return $this->category;
     }
 
-    public function setCategory(?Category $category): static
+    public function setCategory(?ProductCategory $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

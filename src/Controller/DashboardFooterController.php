@@ -11,7 +11,7 @@ class DashboardFooterController extends AbstractController
     {
         return $this->render('dashboard_footer/index.html.twig', [
             'year' => date('Y'),
-            'site_name' => 'Admin',
+            'site_name' => 'STELLAR',
         ]);
     }
 }

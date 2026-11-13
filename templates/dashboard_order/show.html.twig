@@ -1,0 +1,107 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'dashboard/_badges.html.twig' as badges %}
+
+{% block content %}
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_dashboard_order_index') }}">&larr; All orders</a>
+        <div class="d-flex flex-wrap gap-1">
+            {% include 'dashboard_order/_actions.html.twig' with {back: ''} %}
+        </div>
+    </div>
+
+    {% if order.orderStatus == 'Return requested' %}
+        <div class="alert alert-warning" role="status">
+            <h2 class="h6 mb-1">Return requested</h2>
+            <p class="mb-0">
+                The customer asked to return this order on {{ order.returnRequestedAt|date('M j, Y g:i A') }}.
+                Reason: <strong>{{ order.returnReason }}</strong>. Amount to refund: <strong>₱{{ order.totalAmount|number_format(2) }}</strong>.
+                {% if not is_granted('ROLE_ADMIN') %}Only an admin can approve the refund.{% endif %}
+            </p>
+        </div>
+    {% elseif order.returnReason and order.returnRequestedAt %}
+        <p class="small text-body-secondary">
+            Return requested on {{ order.returnRequestedAt|date('M j, Y') }} ({{ order.returnReason }}):
+            {{ order.orderStatus == 'Returned' ? 'approved and refunded.' : 'rejected.' }}
+        </p>
+    {% endif %}
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Summary</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-5 text-body-secondary fw-normal">Placed</dt>
+                        <dd class="col-7">{{ order.createdAt|date('M j, Y g:i A') }}</dd>
+
+                        <dt class="col-5 text-body-secondary fw-normal">Status</dt>
+                        <dd class="col-7">{{ badges.order_status(order.orderStatus) }}</dd>
+
+                        <dt class="col-5 text-body-secondary fw-normal">Payment</dt>
+                        <dd class="col-7">{{ order.paymentMethod == 'COD' ? 'Cash on delivery' : 'Card' }} {{ badges.payment_status(order.paymentStatus) }}</dd>
+
+                        <dt class="col-5 text-body-secondary fw-normal">Total</dt>
+                        <dd class="col-7 mb-0">₱{{ order.totalAmount|number_format(2) }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Ship to</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3 text-body-secondary fw-normal">Name</dt>
+                        <dd class="col-sm-9">{{ order.shippingName }}</dd>
+
+                        <dt class="col-sm-3 text-body-secondary fw-normal">Mobile</dt>
+                        <dd class="col-sm-9">{{ order.shippingMobile }}</dd>
+
+                        <dt class="col-sm-3 text-body-secondary fw-normal">Address</dt>
+                        <dd class="col-sm-9">{{ order.shippingAddress }}</dd>
+
+                        <dt class="col-sm-3 text-body-secondary fw-normal">Account</dt>
+                        <dd class="col-sm-9 mb-0">{{ order.user.username }}{{ order.user.email ? ' · ' ~ order.user.email : '' }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Items</h2>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price at purchase</th>
+                                    <th>Qty</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>₱{{ item.priceAtPurchase|number_format(2) }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td class="text-end">₱{{ (item.priceAtPurchase * item.quantity)|number_format(2) }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total</th>
+                                    <th class="text-end">₱{{ order.totalAmount|number_format(2) }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

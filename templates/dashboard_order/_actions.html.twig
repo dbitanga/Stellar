@@ -1,0 +1,44 @@
+{# Status buttons for one order. Expects `order` and `back` (route to return to). #}
+{% if order.orderStatus == 'Processing' %}
+    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_ship', {id: order.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('ship_order' ~ order.id) }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Ship</button>
+    </form>
+    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_cancel', {id: order.id}) }}"
+          data-confirm="Cancel order #{{ order.id }}? Its items go back into stock{{ order.paymentStatus == 'Paid' ? ' and the payment is refunded' : '' }}.">
+        <input type="hidden" name="_token" value="{{ csrf_token('cancel_order' ~ order.id) }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+    </form>
+{% elseif order.orderStatus == 'Shipped' %}
+    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_deliver', {id: order.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('deliver_order' ~ order.id) }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark delivered</button>
+    </form>
+{% elseif order.orderStatus == 'Return requested' %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <form method="post" class="d-inline" action="{{ path('app_dashboard_order_refund', {id: order.id}) }}"
+              data-confirm="Approve the return of order #{{ order.id }} and refund ₱{{ order.totalAmount|number_format(2) }}? Its items go back into stock.">
+            <input type="hidden" name="_token" value="{{ csrf_token('refund_order' ~ order.id) }}">
+            <input type="hidden" name="_back" value="{{ back }}">
+            <button type="submit" class="btn btn-sm btn-danger">Approve &amp; refund</button>
+        </form>
+    {% endif %}
+    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_reject_return', {id: order.id}) }}"
+          data-confirm="Reject the return of order #{{ order.id }}? The customer keeps the order and is not refunded.">
+        <input type="hidden" name="_token" value="{{ csrf_token('reject_return_order' ~ order.id) }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Reject return</button>
+    </form>
+{% endif %}
+
+{% if is_granted('ROLE_ADMIN') and order.paymentStatus == 'Pending' and order.orderStatus != 'Cancelled' %}
+    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_pay', {id: order.id}) }}"
+          data-confirm="Mark order #{{ order.id }} as paid?">
+        <input type="hidden" name="_token" value="{{ csrf_token('pay_order' ~ order.id) }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark paid</button>
+    </form>
+{% endif %}

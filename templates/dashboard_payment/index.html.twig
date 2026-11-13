@@ -1,0 +1,71 @@
+{% extends 'dashboard/layout.html.twig' %}
+{% import 'dashboard/_badges.html.twig' as badges %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stat-value {
+            font-size: 2rem;
+            color: #A8C4DA;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <p class="text-body-secondary">Payments are simulated: card orders are paid at checkout, cash on delivery is collected when the order is delivered.</p>
+
+    <div class="row g-3 mb-3">
+        {% for label, amount in totals %}
+            <div class="col-12 col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="small text-body-secondary">{{ label }}</div>
+                        <div class="stat-value text-break">₱{{ amount|number_format(2) }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover align-middle w-100" data-datatable>
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Method</th>
+                        <th>Amount</th>
+                        <th>Payment</th>
+                        <th>Order status</th>
+                        <th data-orderable="false">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td data-order="{{ order.id }}"><a href="{{ path('app_dashboard_order_show', {id: order.id}) }}">#{{ order.id }}</a></td>
+                            <td data-order="{{ order.createdAt|date('U') }}">{{ order.createdAt|date('M j, Y') }}</td>
+                            <td>{{ order.shippingName }}</td>
+                            <td>{{ order.paymentMethod == 'COD' ? 'Cash on delivery' : 'Card' }}</td>
+                            <td data-order="{{ order.totalAmount }}">₱{{ order.totalAmount|number_format(2) }}</td>
+                            <td>{{ badges.payment_status(order.paymentStatus) }}</td>
+                            <td>{{ badges.order_status(order.orderStatus) }}</td>
+                            <td class="text-nowrap">
+                                {% if order.paymentStatus == 'Pending' and order.orderStatus != 'Cancelled' %}
+                                    <form method="post" class="d-inline" action="{{ path('app_dashboard_order_pay', {id: order.id}) }}"
+                                          data-confirm="Mark order #{{ order.id }} as paid?">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('pay_order' ~ order.id) }}">
+                                        <input type="hidden" name="_back" value="app_dashboard_payment_index">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark paid</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% macro order_status(status) %}
+    {% set colors = {Processing: 'warning', Shipped: 'info', Delivered: 'success', Cancelled: 'secondary', 'Return requested': 'danger', Returned: 'dark'} %}
+    <span class="badge text-bg-{{ colors[status] ?? 'secondary' }}">{{ status }}</span>
+{% endmacro %}
+
+{% macro payment_status(status) %}
+    {% set colors = {Pending: 'warning', Paid: 'success', Refunded: 'secondary'} %}
+    <span class="badge text-bg-{{ colors[status] ?? 'secondary' }}">{{ status }}</span>
+{% endmacro %}

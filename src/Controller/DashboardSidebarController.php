@@ -12,10 +12,15 @@ class DashboardSidebarController extends AbstractController
     {
         $currentRoute = $requestStack->getMainRequest()?->attributes->get('_route');
 
+        // 'role' is checked with is_granted() in the template, so staff never see admin-only links.
         $menu = [
-            ['label' => 'Dashboard', 'route' => 'app_dashboard_home', 'prefix' => 'app_dashboard_home'],
-            ['label' => 'Products', 'route' => 'app_dashboard_product_index', 'prefix' => 'app_dashboard_product'],
-            ['label' => 'Categories', 'route' => 'app_dashboard_category_index', 'prefix' => 'app_dashboard_category'],
+            ['label' => 'Dashboard', 'route' => 'app_dashboard_home', 'prefix' => 'app_dashboard_home', 'role' => 'ROLE_ADMIN'],
+            ['label' => 'Orders', 'route' => 'app_dashboard_order_index', 'prefix' => 'app_dashboard_order', 'role' => 'ROLE_STAFF'],
+            ['label' => 'Payments', 'route' => 'app_dashboard_payment_index', 'prefix' => 'app_dashboard_payment', 'role' => 'ROLE_ADMIN'],
+            ['label' => 'Products', 'route' => 'app_dashboard_product_index', 'prefix' => 'app_dashboard_product', 'role' => 'ROLE_STAFF'],
+            ['label' => 'Customers', 'route' => 'app_dashboard_customer_index', 'prefix' => 'app_dashboard_customer', 'role' => 'ROLE_ADMIN'],
+            ['label' => 'Staff', 'route' => 'app_dashboard_user_index', 'prefix' => 'app_dashboard_user', 'role' => 'ROLE_ADMIN'],
+            ['label' => 'My Profile', 'route' => 'app_profile', 'prefix' => 'app_profile', 'role' => 'ROLE_STAFF'],
         ];
 
         return $this->render('dashboard_sidebar/index.html.twig', [
